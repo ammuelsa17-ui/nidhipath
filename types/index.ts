@@ -79,6 +79,8 @@ export interface Scheme {
 
   // Verification details
   officialSourceUrl: string;
+  sourceName?: string;
+  sourceEffectiveDate?: string;
   lastVerifiedDate: string;
   isPrototypeData: boolean;
 }

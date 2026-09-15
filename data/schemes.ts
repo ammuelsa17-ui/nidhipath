@@ -12,11 +12,11 @@ export const DEMO_SCHEMES: Scheme[] = [
     name: 'NSFDC Micro Finance Scheme (MFS)',
     shortName: 'NSFDC Micro Credit',
     ministry: 'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    description: 'Provides direct micro-credit assistance to Scheduled Caste entrepreneurs for small income-generating activities and self-employment units up to ₹1.40 Lakhs.',
+    description: 'Provides direct micro-credit assistance to Scheduled Caste entrepreneurs for small income-generating activities with unit project cost up to ₹1.40 Lakhs (Max NSFDC Loan ₹1.25 Lakhs).',
     targetAudience: 'Scheduled Caste (SC) beneficiaries with valid caste certificate and annual family income up to ₹5,00,000',
-    maxLoanAmount: 140000, // ₹1.40 Lakhs per unit
+    maxLoanAmount: 125000, // Max loan ₹1.25 Lakhs (90% of ₹1.40L project cost)
     maxSubsidyPercent: 0, // Direct concessional interest loan
-    interestRate: 5.00, // 5% p.a. to ultimate beneficiary
+    interestRate: 6.50, // 6.5% p.a. to ultimate beneficiary (Official NSFDC FAQ)
     maxTenureYears: 3,
     moratoriumMonths: 3,
     collateralRequired: false, // SCA / State Channelising Agency guarantee
@@ -31,8 +31,10 @@ export const DEMO_SCHEMES: Scheme[] = [
       allowedCategories: ['SC'],
       allowedProjectTypes: ['manufacturing', 'services', 'trading', 'agro_processing', 'street_vending', 'handicraft_artisan']
     },
-    officialSourceUrl: 'https://nsfdc.nic.in/',
-    lastVerifiedDate: '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    sourceName: 'NSFDC Official FAQ',
+    officialSourceUrl: 'https://nsfdc.nic.in/faqs',
+    sourceEffectiveDate: '2026-01-07',
+    lastVerifiedDate: '2026-03-01 (Verified against Official NSFDC FAQ)',
     isPrototypeData: true
   },
   {
@@ -41,11 +43,11 @@ export const DEMO_SCHEMES: Scheme[] = [
     name: 'NSFDC Aajeevika Micro-Finance Yojana (AMY)',
     shortName: 'NSFDC Aajeevika Micro Loan',
     ministry: 'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    description: 'Provides credit facility up to ₹1.50 Lakhs for micro-enterprise activities to SC beneficiaries through State Channelising Agencies (SCAs).',
+    description: 'Provides micro-credit facility for enterprise activities up to ₹1.40 Lakhs project cost (Max NSFDC Loan ₹1.25 Lakhs) to SC beneficiaries through State Channelising Agencies (SCAs).',
     targetAudience: 'Scheduled Caste (SC) individual entrepreneurs and SHGs with annual family income up to ₹5,00,000',
-    maxLoanAmount: 150000, // ₹1.50 Lakhs per unit
+    maxLoanAmount: 125000, // Max loan ₹1.25 Lakhs
     maxSubsidyPercent: 0,
-    interestRate: 5.00,
+    interestRate: 5.00, // 5% p.a. for SHG micro-credit
     maxTenureYears: 4,
     moratoriumMonths: 3,
     collateralRequired: false,
@@ -56,12 +58,14 @@ export const DEMO_SCHEMES: Scheme[] = [
       maxAge: 65,
       maxIncome: 500000, // Revised Jan 7, 2026 MoSJE guidelines
       minProjectCost: 10000,
-      maxProjectCost: 150000,
+      maxProjectCost: 140000,
       allowedCategories: ['SC'],
       allowedProjectTypes: ['manufacturing', 'services', 'trading', 'agro_processing', 'street_vending', 'handicraft_artisan']
     },
-    officialSourceUrl: 'https://nsfdc.nic.in/',
-    lastVerifiedDate: '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    sourceName: 'NSFDC Official FAQ',
+    officialSourceUrl: 'https://nsfdc.nic.in/faqs',
+    sourceEffectiveDate: '2026-01-07',
+    lastVerifiedDate: '2026-03-01 (Verified against Official NSFDC FAQ)',
     isPrototypeData: true
   },
   {
@@ -70,11 +74,11 @@ export const DEMO_SCHEMES: Scheme[] = [
     name: 'NSFDC Term Loan Scheme',
     shortName: 'NSFDC Term Credit Facility',
     ministry: 'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    description: 'Financial assistance up to ₹15 Lakhs for setting up commercial/viable projects in Agriculture, Transport, Service, or Small Business sectors.',
+    description: 'Financial assistance for setting up commercial/viable projects with project cost above ₹1.40 Lakhs up to ₹50 Lakhs (Max NSFDC Loan ₹45 Lakhs).',
     targetAudience: 'Scheduled Caste (SC) entrepreneurs setting up viable enterprises with annual family income up to ₹5,00,000',
-    maxLoanAmount: 1500000, // ₹15 Lakhs
+    maxLoanAmount: 4500000, // Max loan ₹45 Lakhs (90% of ₹50L project cost)
     maxSubsidyPercent: 0,
-    interestRate: 6.00, // 6% p.a. up to ₹5L; 7-8% above ₹5L
+    interestRate: 8.00, // 8.0% p.a. to ultimate beneficiary (Official NSFDC FAQ)
     maxTenureYears: 5,
     moratoriumMonths: 6,
     collateralRequired: false,
@@ -84,13 +88,15 @@ export const DEMO_SCHEMES: Scheme[] = [
       minAge: 18,
       maxAge: 65,
       maxIncome: 500000, // Revised Jan 7, 2026 MoSJE guidelines
-      minProjectCost: 100000,
-      maxProjectCost: 1500000,
+      minProjectCost: 140001,
+      maxProjectCost: 5000000,
       allowedCategories: ['SC'],
       allowedProjectTypes: ['manufacturing', 'services', 'trading', 'agro_processing', 'handicraft_artisan']
     },
-    officialSourceUrl: 'https://nsfdc.nic.in/',
-    lastVerifiedDate: '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    sourceName: 'NSFDC Official FAQ',
+    officialSourceUrl: 'https://nsfdc.nic.in/faqs',
+    sourceEffectiveDate: '2026-01-07',
+    lastVerifiedDate: '2026-03-01 (Verified against Official NSFDC FAQ)',
     isPrototypeData: true
   },
   {
@@ -99,11 +105,11 @@ export const DEMO_SCHEMES: Scheme[] = [
     name: 'NSFDC Udyam Nidhi Yojana (UNY)',
     shortName: 'NSFDC Udyam Nidhi',
     ministry: 'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    description: 'Concessional loan assistance up to ₹10 Lakhs to SC youth with professional/technical qualifications to establish self-employment ventures.',
+    description: 'Concessional loan assistance for projects up to ₹5 Lakhs (Max NSFDC Loan ₹4.50 Lakhs) to SC youth with professional/technical qualifications to establish self-employment ventures.',
     targetAudience: 'Skilled and technically qualified SC youth setting up greenfield/expansion projects with annual income up to ₹5,00,000',
-    maxLoanAmount: 1000000, // ₹10 Lakhs
+    maxLoanAmount: 450000, // Max loan ₹4.50 Lakhs (90% of ₹5L project cost)
     maxSubsidyPercent: 0,
-    interestRate: 6.00,
+    interestRate: 13.00, // 13.0% p.a. through Cooperative channels (Official NSFDC FAQ)
     maxTenureYears: 5,
     moratoriumMonths: 6,
     collateralRequired: false,
@@ -113,14 +119,16 @@ export const DEMO_SCHEMES: Scheme[] = [
       minAge: 18,
       maxAge: 50,
       maxIncome: 500000, // Revised Jan 7, 2026 MoSJE guidelines
-      minProjectCost: 100000,
-      maxProjectCost: 1000000,
+      minProjectCost: 50000,
+      maxProjectCost: 500000,
       allowedCategories: ['SC'],
       allowedProjectTypes: ['manufacturing', 'services', 'trading', 'agro_processing', 'handicraft_artisan'],
       minEducation: '10th_pass'
     },
-    officialSourceUrl: 'https://nsfdc.nic.in/',
-    lastVerifiedDate: '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    sourceName: 'NSFDC Official FAQ',
+    officialSourceUrl: 'https://nsfdc.nic.in/faqs',
+    sourceEffectiveDate: '2026-01-07',
+    lastVerifiedDate: '2026-03-01 (Verified against Official NSFDC FAQ)',
     isPrototypeData: true
   },
   {
@@ -129,13 +137,13 @@ export const DEMO_SCHEMES: Scheme[] = [
     name: 'NSFDC Educational Loan Scheme (ELS)',
     shortName: 'NSFDC Education Credit',
     ministry: 'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    description: 'Educational credit facility up to ₹20 Lakhs (India) / ₹30 Lakhs (Abroad) for SC students pursuing professional/technical higher education.',
+    description: 'Educational credit facility up to ₹40 Lakhs (or 90% of course fee) for SC students pursuing professional/technical higher education in India or abroad.',
     targetAudience: 'SC students pursuing approved technical and professional degrees with annual family income up to ₹5,00,000',
-    maxLoanAmount: 2000000, // ₹20 Lakhs (India)
+    maxLoanAmount: 4000000, // Max loan ₹40 Lakhs (Official NSFDC FAQ)
     maxSubsidyPercent: 0,
-    interestRate: 4.00, // 4% p.a. (Male) / 3.5% p.a. (Female)
-    maxTenureYears: 5,
-    moratoriumMonths: 6,
+    interestRate: 6.50, // 6.5% p.a. (Official NSFDC FAQ)
+    maxTenureYears: 10, // Repayment tenure up to 10 years
+    moratoriumMonths: 12, // Course period + 1 year moratorium
     collateralRequired: false,
     isNsfdcScheme: true,
     categoryTag: 'NSFDC Primary Scheme',
@@ -143,13 +151,15 @@ export const DEMO_SCHEMES: Scheme[] = [
       minAge: 18,
       maxIncome: 500000, // Revised Jan 7, 2026 MoSJE guidelines
       minProjectCost: 50000,
-      maxProjectCost: 2000000,
+      maxProjectCost: 4000000,
       allowedCategories: ['SC'],
       allowedProjectTypes: ['services'],
       minEducation: '12th_pass'
     },
-    officialSourceUrl: 'https://nsfdc.nic.in/',
-    lastVerifiedDate: '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    sourceName: 'NSFDC Official FAQ',
+    officialSourceUrl: 'https://nsfdc.nic.in/faqs',
+    sourceEffectiveDate: '2026-01-07',
+    lastVerifiedDate: '2026-03-01 (Verified against Official NSFDC FAQ)',
     isPrototypeData: true
   },
 

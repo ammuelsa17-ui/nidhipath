@@ -9,7 +9,6 @@
 -- ------------------------------------------------------------------------------
 -- 1. SCHEMAS & TABLES CREATION (Idempotent: IF NOT EXISTS)
 -- ------------------------------------------------------------------------------
-
 -- Master Table for Credit-Linked Government Schemes
 CREATE TABLE IF NOT EXISTS schemes (
     id VARCHAR(64) PRIMARY KEY,
@@ -25,7 +24,9 @@ CREATE TABLE IF NOT EXISTS schemes (
     maximum_tenure INTEGER NOT NULL,
     moratorium INTEGER NOT NULL,
     collateral_required BOOLEAN DEFAULT FALSE,
+    source_name VARCHAR(128) DEFAULT 'NSFDC Official FAQ',
     source_url TEXT NOT NULL,
+    source_effective_date VARCHAR(64) DEFAULT '2026-01-07',
     verification_date VARCHAR(64) NOT NULL,
     data_status VARCHAR(64) DEFAULT 'Prototype Dataset • Based on Official Sources'
 );
@@ -75,25 +76,27 @@ CREATE TABLE IF NOT EXISTS partner_schemes (
 INSERT INTO schemes (
     id, code, name, short_name, ministry, description, target_audience,
     maximum_loan_amount, max_subsidy_percent, interest_rate, maximum_tenure,
-    moratorium, collateral_required, source_url, verification_date, data_status
+    moratorium, collateral_required, source_name, source_url, source_effective_date, verification_date, data_status
 ) VALUES
--- PRIMARY NSFDC SCHEMES (https://nsfdc.nic.in/ - MoSJE Focus)
+-- PRIMARY NSFDC SCHEMES (https://nsfdc.nic.in/faqs - Official NSFDC FAQ)
 (
     'nsfdc_mfs_2026',
     'NSFDC_MFS',
     'NSFDC Micro Finance Scheme (MFS)',
     'NSFDC Micro Credit',
     'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    'Provides direct micro-credit assistance to Scheduled Caste entrepreneurs for small income-generating activities and self-employment units up to ₹1.40 Lakhs.',
+    'Provides direct micro-credit assistance to Scheduled Caste entrepreneurs for small income-generating activities with unit project cost up to ₹1.40 Lakhs (Max NSFDC Loan ₹1.25 Lakhs).',
     'Scheduled Caste (SC) beneficiaries with valid caste certificate and annual family income up to ₹5,00,000',
-    140000.00,
+    125000.00,
     0.00,
-    5.00,
+    6.50,
     3,
     3,
     FALSE,
-    'https://nsfdc.nic.in/',
-    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'NSFDC Official FAQ',
+    'https://nsfdc.nic.in/faqs',
+    '2026-01-07',
+    '2026-03-01 (Verified against Official NSFDC FAQ)',
     'Prototype Dataset • Based on Official Sources'
 ),
 (
@@ -102,16 +105,18 @@ INSERT INTO schemes (
     'NSFDC Aajeevika Micro-Finance Yojana (AMY)',
     'NSFDC Aajeevika Micro Loan',
     'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    'Provides credit facility up to ₹1.50 Lakhs for micro-enterprise activities to SC beneficiaries through State Channelising Agencies (SCAs).',
+    'Provides micro-credit facility for enterprise activities up to ₹1.40 Lakhs project cost (Max NSFDC Loan ₹1.25 Lakhs) to SC beneficiaries through State Channelising Agencies (SCAs).',
     'Scheduled Caste (SC) individual entrepreneurs and SHGs with annual family income up to ₹5,00,000',
-    150000.00,
+    125000.00,
     0.00,
     5.00,
     4,
     3,
     FALSE,
-    'https://nsfdc.nic.in/',
-    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'NSFDC Official FAQ',
+    'https://nsfdc.nic.in/faqs',
+    '2026-01-07',
+    '2026-03-01 (Verified against Official NSFDC FAQ)',
     'Prototype Dataset • Based on Official Sources'
 ),
 (
@@ -120,16 +125,18 @@ INSERT INTO schemes (
     'NSFDC Term Loan Scheme',
     'NSFDC Term Credit Facility',
     'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    'Financial assistance up to ₹15 Lakhs for setting up commercial/viable projects in Agriculture, Transport, Service, or Small Business sectors.',
+    'Financial assistance for setting up commercial/viable projects with project cost above ₹1.40 Lakhs up to ₹50 Lakhs (Max NSFDC Loan ₹45 Lakhs).',
     'Scheduled Caste (SC) entrepreneurs setting up viable enterprises with annual family income up to ₹5,00,000',
-    1500000.00,
+    4500000.00,
     0.00,
-    6.00,
+    8.00,
     5,
     6,
     FALSE,
-    'https://nsfdc.nic.in/',
-    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'NSFDC Official FAQ',
+    'https://nsfdc.nic.in/faqs',
+    '2026-01-07',
+    '2026-03-01 (Verified against Official NSFDC FAQ)',
     'Prototype Dataset • Based on Official Sources'
 ),
 (
@@ -138,16 +145,18 @@ INSERT INTO schemes (
     'NSFDC Udyam Nidhi Yojana (UNY)',
     'NSFDC Udyam Nidhi',
     'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    'Concessional loan assistance up to ₹10 Lakhs to SC youth with professional/technical qualifications to establish self-employment ventures.',
+    'Concessional loan assistance for projects up to ₹5 Lakhs (Max NSFDC Loan ₹4.50 Lakhs) to SC youth with professional/technical qualifications to establish self-employment ventures.',
     'Skilled and technically qualified SC youth setting up greenfield/expansion projects with annual income up to ₹5,00,000',
-    1000000.00,
+    450000.00,
     0.00,
-    6.00,
+    13.00,
     5,
     6,
     FALSE,
-    'https://nsfdc.nic.in/',
-    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'NSFDC Official FAQ',
+    'https://nsfdc.nic.in/faqs',
+    '2026-01-07',
+    '2026-03-01 (Verified against Official NSFDC FAQ)',
     'Prototype Dataset • Based on Official Sources'
 ),
 (
@@ -156,16 +165,18 @@ INSERT INTO schemes (
     'NSFDC Educational Loan Scheme (ELS)',
     'NSFDC Education Credit',
     'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
-    'Educational credit facility up to ₹20 Lakhs (India) / ₹30 Lakhs (Abroad) for SC students pursuing professional/technical higher education.',
+    'Educational credit facility up to ₹40 Lakhs (or 90% of course fee) for SC students pursuing professional/technical higher education in India or abroad.',
     'SC students pursuing approved technical and professional degrees with annual family income up to ₹5,00,000',
-    2000000.00,
+    4000000.00,
     0.00,
-    4.00,
-    5,
-    6,
+    6.50,
+    10,
+    12,
     FALSE,
-    'https://nsfdc.nic.in/',
-    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'NSFDC Official FAQ',
+    'https://nsfdc.nic.in/faqs',
+    '2026-01-07',
+    '2026-03-01 (Verified against Official NSFDC FAQ)',
     'Prototype Dataset • Based on Official Sources'
 ),
 
@@ -184,7 +195,9 @@ INSERT INTO schemes (
     7,
     6,
     FALSE,
+    'Official PMEGP Portal',
     'https://www.kviconline.gov.in/pmegpeportal',
+    '2023-12-07',
     '2026-01-15 (Verified Official Portal Data)',
     'Prototype Dataset • Based on Official Sources'
 ),
@@ -202,7 +215,9 @@ INSERT INTO schemes (
     7,
     18,
     FALSE,
+    'Official Stand-Up Mitra Portal',
     'https://www.standupmitra.in',
+    '2024-01-01',
     '2026-02-01 (Verified Official Guidelines)',
     'Prototype Dataset • Based on Official Sources'
 ),
@@ -220,7 +235,9 @@ INSERT INTO schemes (
     5,
     3,
     FALSE,
+    'Official MUDRA Portal',
     'https://www.mudra.org.in',
+    '2024-01-01',
     '2026-01-10 (Verified Official Portal Data)',
     'Prototype Dataset • Based on Official Sources'
 ),
@@ -238,7 +255,9 @@ INSERT INTO schemes (
     3,
     1,
     FALSE,
+    'Official PM SVANidhi Portal',
     'https://pmsvanidhi.mohua.gov.in',
+    '2024-01-01',
     '2026-02-10 (Verified Official Portal Data)',
     'Prototype Dataset • Based on Official Sources'
 ),
@@ -256,7 +275,9 @@ INSERT INTO schemes (
     5,
     6,
     FALSE,
+    'Official PM Vishwakarma Portal',
     'https://pmvishwakarma.gov.in',
+    '2023-09-17',
     '2026-01-20 (Verified Official Portal Data)',
     'Prototype Dataset • Based on Official Sources'
 )
@@ -268,7 +289,9 @@ ON CONFLICT (id) DO UPDATE SET
     maximum_loan_amount = EXCLUDED.maximum_loan_amount,
     max_subsidy_percent = EXCLUDED.max_subsidy_percent,
     interest_rate = EXCLUDED.interest_rate,
+    source_name = EXCLUDED.source_name,
     source_url = EXCLUDED.source_url,
+    source_effective_date = EXCLUDED.source_effective_date,
     verification_date = EXCLUDED.verification_date,
     data_status = EXCLUDED.data_status;
 
@@ -284,21 +307,22 @@ INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, descrip
 ('nsfdc_mfs_2026', 'age', '>=', '18', 'Minimum age 18 years'),
 ('nsfdc_mfs_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
 ('nsfdc_mfs_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
-('nsfdc_mfs_2026', 'estimatedCost', '<=', '140000', 'Maximum unit project cost ₹1.40 Lakhs');
+('nsfdc_mfs_2026', 'estimatedCost', '<=', '140000', 'Maximum unit project cost ₹1.40 Lakhs (Max Loan ₹1.25 Lakhs)');
 
 -- NSFDC Aajeevika Micro-Finance Yojana (AMY) Rules
 INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
 ('nsfdc_amy_2026', 'age', '>=', '18', 'Minimum age 18 years'),
 ('nsfdc_amy_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
 ('nsfdc_amy_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
-('nsfdc_amy_2026', 'estimatedCost', '<=', '150000', 'Maximum micro credit facility ₹1.50 Lakhs');
+('nsfdc_amy_2026', 'estimatedCost', '<=', '140000', 'Maximum unit project cost ₹1.40 Lakhs (Max Loan ₹1.25 Lakhs)');
 
 -- NSFDC Term Loan Scheme Rules
 INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
 ('nsfdc_term_loan_2026', 'age', '>=', '18', 'Minimum age 18 years'),
 ('nsfdc_term_loan_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
 ('nsfdc_term_loan_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
-('nsfdc_term_loan_2026', 'estimatedCost', '<=', '1500000', 'Maximum loan assistance ₹15 Lakhs');
+('nsfdc_term_loan_2026', 'estimatedCost', '>', '140000', 'Project cost must exceed ₹1.40 Lakhs'),
+('nsfdc_term_loan_2026', 'estimatedCost', '<=', '5000000', 'Maximum project cost ₹50 Lakhs (Max Loan ₹45 Lakhs)');
 
 -- NSFDC Udyam Nidhi Yojana (UNY) Rules
 INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
@@ -306,7 +330,7 @@ INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, descrip
 ('nsfdc_uny_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
 ('nsfdc_uny_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
 ('nsfdc_uny_2026', 'minEducation', '>=', '10th_pass', 'Technical / professional qualification preferred'),
-('nsfdc_uny_2026', 'estimatedCost', '<=', '1000000', 'Maximum loan facility ₹10 Lakhs');
+('nsfdc_uny_2026', 'estimatedCost', '<=', '500000', 'Maximum project cost ₹5 Lakhs (Max Loan ₹4.50 Lakhs)');
 
 -- NSFDC Educational Loan Scheme (ELS) Rules
 INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
@@ -314,7 +338,7 @@ INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, descrip
 ('nsfdc_els_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
 ('nsfdc_els_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) student'),
 ('nsfdc_els_2026', 'minEducation', '>=', '12th_pass', 'Higher secondary / admission to professional degree'),
-('nsfdc_els_2026', 'estimatedCost', '<=', '2000000', 'Maximum educational credit ₹20 Lakhs (India)');
+('nsfdc_els_2026', 'estimatedCost', '<=', '4000000', 'Maximum educational loan ₹40 Lakhs (or 90% of fee)');edCost', '<=', '2000000', 'Maximum educational credit ₹20 Lakhs (India)');
 
 -- General Secondary Schemes Rules
 INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
