@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
             <div className="flex items-center space-x-2">
               <span className="text-xl font-extrabold tracking-tight text-white">NidhiPath</span>
               <span className="bg-blue-900/80 text-blue-300 text-xs px-2 py-0.5 rounded font-mono border border-blue-700/50">
-                PS ID: SIH26092
+                Decision-Support Platform
               </span>
             </div>
             <p className="text-xs text-slate-400 font-medium">

@@ -8,7 +8,7 @@ export const StatusBanner: React.FC = () => {
         <div className="flex items-center space-x-2">
           <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
           <span>
-            <strong className="font-semibold">SIH 2026 Prototype Mode:</strong> Operating on verified local structured demo datasets. No live government APIs, live certificate verification, or live bank NPA data are claimed or simulated.
+            <strong className="font-semibold">Prototype Data — For Demonstration:</strong> Operating on verified local structured datasets. No live government APIs, live certificate verification, or live bank NPA data are claimed or simulated.
           </span>
         </div>
         <div className="flex items-center space-x-2 text-amber-700 font-mono text-[11px] shrink-0">

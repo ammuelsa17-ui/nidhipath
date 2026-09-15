@@ -10,7 +10,7 @@ interface Props {
 const PRESET_PERSONAS: { name: string; tag: string; profile: BeneficiaryProfile }[] = [
   {
     name: 'Ramesh (SC Youth Enterprise)',
-    tag: 'Target SIH Beneficiary • Stand-Up India',
+    tag: 'SC Entrepreneur • Stand-Up India',
     profile: {
       applicantName: 'Ramesh Naik',
       age: 29,

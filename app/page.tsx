@@ -15,7 +15,7 @@ import { AIAssistant } from '../components/AIAssistant';
 
 import { Compass, ShieldCheck, Calculator, Navigation, Sparkles, ArrowDown } from 'lucide-react';
 
-// Default initial preset profile tailored for SIH26092 Target SC Beneficiary
+// Default initial preset profile tailored for Target SC Beneficiary
 const INITIAL_PROFILE: BeneficiaryProfile = {
   applicantName: 'Ramesh Naik',
   age: 29,
