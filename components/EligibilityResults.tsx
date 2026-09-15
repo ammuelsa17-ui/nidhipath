@@ -191,16 +191,17 @@ export const EligibilityResults: React.FC<Props> = ({
 
                 {/* Card Action Footer */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200">
-                  <div className="flex items-center space-x-2 text-xs text-slate-500">
-                    <FileText className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Source:</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                    <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="font-semibold text-slate-700">Prototype Dataset • Based on Official Sources</span>
+                    <span className="text-slate-300">|</span>
                     <a
                       href={item.scheme.officialSourceUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-blue-600 hover:underline font-mono text-[11px]"
+                      className="text-blue-600 underline hover:text-blue-800 inline-flex items-center gap-1 font-medium"
                     >
-                      {item.scheme.officialSourceUrl}
+                      Official Guidelines <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
 
