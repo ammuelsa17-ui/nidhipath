@@ -476,7 +476,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- ------------------------------------------------------------------------------
 
 INSERT INTO partner_schemes (partner_id, scheme_id) VALUES
--- SBI Koramangala
+-- SBI Koramangala (9 mappings)
 ('partner_sbi_001', 'nsfdc_mfs_2026'),
 ('partner_sbi_001', 'nsfdc_amy_2026'),
 ('partner_sbi_001', 'nsfdc_term_loan_2026'),
@@ -484,42 +484,56 @@ INSERT INTO partner_schemes (partner_id, scheme_id) VALUES
 ('partner_sbi_001', 'nsfdc_els_2026'),
 ('partner_sbi_001', 'pmegp_2026'),
 ('partner_sbi_001', 'standup_india_2026'),
+('partner_sbi_001', 'mudra_tarun_2026'),
+('partner_sbi_001', 'pm_vishwakarma_2026'),
 
--- PNB Connaught Place
+-- PNB Connaught Place (8 mappings)
 ('partner_pnb_002', 'nsfdc_mfs_2026'),
 ('partner_pnb_002', 'nsfdc_amy_2026'),
 ('partner_pnb_002', 'nsfdc_term_loan_2026'),
 ('partner_pnb_002', 'nsfdc_uny_2026'),
 ('partner_pnb_002', 'pmegp_2026'),
+('partner_pnb_002', 'standup_india_2026'),
+('partner_pnb_002', 'mudra_tarun_2026'),
 ('partner_pnb_002', 'pmsvanidhi_2026'),
 
--- KSCDC SCA Bengaluru
+-- KSCDC SCA Bengaluru (5 mappings)
 ('partner_kscdc_007', 'nsfdc_mfs_2026'),
 ('partner_kscdc_007', 'nsfdc_amy_2026'),
 ('partner_kscdc_007', 'nsfdc_term_loan_2026'),
 ('partner_kscdc_007', 'nsfdc_uny_2026'),
 ('partner_kscdc_007', 'nsfdc_els_2026'),
 
--- DIC Bengaluru
+-- DIC Bengaluru (6 mappings)
 ('partner_dic_003', 'nsfdc_mfs_2026'),
 ('partner_dic_003', 'nsfdc_term_loan_2026'),
 ('partner_dic_003', 'nsfdc_uny_2026'),
 ('partner_dic_003', 'pmegp_2026'),
+('partner_dic_003', 'pm_vishwakarma_2026'),
+('partner_dic_003', 'standup_india_2026'),
 
--- CSC Patna
+-- CSC Patna (5 mappings)
 ('partner_csc_004', 'nsfdc_mfs_2026'),
 ('partner_csc_004', 'nsfdc_amy_2026'),
 ('partner_csc_004', 'pmsvanidhi_2026'),
+('partner_csc_004', 'mudra_tarun_2026'),
+('partner_csc_004', 'pm_vishwakarma_2026'),
 
--- KVGB Dharwad
+-- KVGB Dharwad (6 mappings)
 ('partner_rrb_005', 'nsfdc_mfs_2026'),
 ('partner_rrb_005', 'nsfdc_amy_2026'),
 ('partner_rrb_005', 'nsfdc_term_loan_2026'),
+('partner_rrb_005', 'pmegp_2026'),
+('partner_rrb_005', 'mudra_tarun_2026'),
+('partner_rrb_005', 'pm_vishwakarma_2026'),
 
--- Canara RSETI Ramanagara
+-- Canara RSETI Ramanagara (8 mappings)
 ('partner_canara_006', 'nsfdc_mfs_2026'),
 ('partner_canara_006', 'nsfdc_amy_2026'),
 ('partner_canara_006', 'nsfdc_term_loan_2026'),
 ('partner_canara_006', 'nsfdc_uny_2026'),
-('partner_canara_006', 'nsfdc_els_2026')
+('partner_canara_006', 'nsfdc_els_2026'),
+('partner_canara_006', 'pmegp_2026'),
+('partner_canara_006', 'pm_vishwakarma_2026'),
+('partner_canara_006', 'standup_india_2026')
 ON CONFLICT (partner_id, scheme_id) DO NOTHING;

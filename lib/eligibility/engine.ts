@@ -131,6 +131,17 @@ export function evaluateSingleScheme(
   }
 
   // 6. EDUCATION REQUIREMENT CHECK
+  const EDUCATION_RANK: Record<string, number> = {
+    illiterate: 0,
+    below_8th: 1,
+    '8th_pass': 2,
+    '10th_pass': 3,
+    '12th_pass': 4,
+    diploma: 5,
+    graduate: 6,
+    post_graduate: 7,
+  };
+
   if (scheme.code === 'PMEGP') {
     const costHigh = (profile.projectType === 'manufacturing' && profile.estimatedCost > 1000000) ||
                      (profile.projectType === 'services' && profile.estimatedCost > 500000);
@@ -148,6 +159,21 @@ export function evaluateSingleScheme(
       if (isEduSufficient) passedConditions.push(cond);
       else failedConditions.push(cond);
     }
+  } else if (r.minEducation) {
+    const userRank = EDUCATION_RANK[profile.education] ?? 0;
+    const reqRank = EDUCATION_RANK[r.minEducation] ?? 0;
+    const eduPassed = userRank >= reqRank;
+    const cond: ConditionEvaluation = {
+      conditionName: 'Minimum Educational Qualification',
+      passed: eduPassed,
+      requirement: `Minimum education level: ${r.minEducation.replace('_', ' ')}`,
+      actual: profile.education.replace('_', ' '),
+      message: eduPassed
+        ? `✓ Education level (${profile.education.replace('_', ' ')}) meets minimum qualification (${r.minEducation.replace('_', ' ')})`
+        : `✗ Qualification (${profile.education.replace('_', ' ')}) is below required level (${r.minEducation.replace('_', ' ')})`
+    };
+    if (eduPassed) passedConditions.push(cond);
+    else failedConditions.push(cond);
   }
 
   const isEligible = failedConditions.length === 0;
