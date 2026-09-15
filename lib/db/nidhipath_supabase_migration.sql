@@ -1,7 +1,8 @@
 -- ==============================================================================
 -- NIDHIPATH — SUPABASE POSTGRESQL DATABASE MIGRATION & SEED SCRIPT
--- Project: NidhiPath (Right Scheme. Right Channel. Right Guidance.)
--- Date: 2026-03-15
+-- Focus: NSFDC Financial Assistance Schemes (MoSJE / SIH26092)
+-- Official Income Limit: ₹5,00,000 p.a. (Revised Jan 7, 2026 MoSJE Guideline)
+-- Primary Official Source: https://nsfdc.nic.in/
 -- Note: Run this script directly inside the Supabase SQL Editor.
 -- ==============================================================================
 
@@ -68,7 +69,7 @@ CREATE TABLE IF NOT EXISTS partner_schemes (
 
 
 -- ------------------------------------------------------------------------------
--- 2. SEED SCHEME DATA (Prototype Dataset • Based on Official Sources)
+-- 2. SEED PRIMARY NSFDC SCHEMES & SECONDARY GENERAL SCHEMES
 -- ------------------------------------------------------------------------------
 
 INSERT INTO schemes (
@@ -76,6 +77,99 @@ INSERT INTO schemes (
     maximum_loan_amount, max_subsidy_percent, interest_rate, maximum_tenure,
     moratorium, collateral_required, source_url, verification_date, data_status
 ) VALUES
+-- PRIMARY NSFDC SCHEMES (https://nsfdc.nic.in/ - MoSJE Focus)
+(
+    'nsfdc_mfs_2026',
+    'NSFDC_MFS',
+    'NSFDC Micro Finance Scheme (MFS)',
+    'NSFDC Micro Credit',
+    'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
+    'Provides direct micro-credit assistance to Scheduled Caste entrepreneurs for small income-generating activities and self-employment units up to ₹1.40 Lakhs.',
+    'Scheduled Caste (SC) beneficiaries with valid caste certificate and annual family income up to ₹5,00,000',
+    140000.00,
+    0.00,
+    5.00,
+    3,
+    3,
+    FALSE,
+    'https://nsfdc.nic.in/',
+    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'Prototype Dataset • Based on Official Sources'
+),
+(
+    'nsfdc_amy_2026',
+    'NSFDC_AMY',
+    'NSFDC Aajeevika Micro-Finance Yojana (AMY)',
+    'NSFDC Aajeevika Micro Loan',
+    'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
+    'Provides credit facility up to ₹1.50 Lakhs for micro-enterprise activities to SC beneficiaries through State Channelising Agencies (SCAs).',
+    'Scheduled Caste (SC) individual entrepreneurs and SHGs with annual family income up to ₹5,00,000',
+    150000.00,
+    0.00,
+    5.00,
+    4,
+    3,
+    FALSE,
+    'https://nsfdc.nic.in/',
+    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'Prototype Dataset • Based on Official Sources'
+),
+(
+    'nsfdc_term_loan_2026',
+    'NSFDC_TERM',
+    'NSFDC Term Loan Scheme',
+    'NSFDC Term Credit Facility',
+    'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
+    'Financial assistance up to ₹15 Lakhs for setting up commercial/viable projects in Agriculture, Transport, Service, or Small Business sectors.',
+    'Scheduled Caste (SC) entrepreneurs setting up viable enterprises with annual family income up to ₹5,00,000',
+    1500000.00,
+    0.00,
+    6.00,
+    5,
+    6,
+    FALSE,
+    'https://nsfdc.nic.in/',
+    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'Prototype Dataset • Based on Official Sources'
+),
+(
+    'nsfdc_uny_2026',
+    'NSFDC_UNY',
+    'NSFDC Udyam Nidhi Yojana (UNY)',
+    'NSFDC Udyam Nidhi',
+    'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
+    'Concessional loan assistance up to ₹10 Lakhs to SC youth with professional/technical qualifications to establish self-employment ventures.',
+    'Skilled and technically qualified SC youth setting up greenfield/expansion projects with annual income up to ₹5,00,000',
+    1000000.00,
+    0.00,
+    6.00,
+    5,
+    6,
+    FALSE,
+    'https://nsfdc.nic.in/',
+    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'Prototype Dataset • Based on Official Sources'
+),
+(
+    'nsfdc_els_2026',
+    'NSFDC_ELS',
+    'NSFDC Educational Loan Scheme (ELS)',
+    'NSFDC Education Credit',
+    'National Scheduled Castes Finance and Development Corporation (NSFDC / MoSJE)',
+    'Educational credit facility up to ₹20 Lakhs (India) / ₹30 Lakhs (Abroad) for SC students pursuing professional/technical higher education.',
+    'SC students pursuing approved technical and professional degrees with annual family income up to ₹5,00,000',
+    2000000.00,
+    0.00,
+    4.00,
+    5,
+    6,
+    FALSE,
+    'https://nsfdc.nic.in/',
+    '2026-01-07 (Official MoSJE/NSFDC Guideline Revision)',
+    'Prototype Dataset • Based on Official Sources'
+),
+
+-- SECONDARY GENERAL SCHEMES
 (
     'pmegp_2026',
     'PMEGP',
@@ -180,43 +274,56 @@ ON CONFLICT (id) DO UPDATE SET
 
 
 -- ------------------------------------------------------------------------------
--- 3. SEED SCHEME ELIGIBILITY RULES (Idempotent: Clears and resets rule list)
+-- 3. SEED SCHEME ELIGIBILITY RULES
 -- ------------------------------------------------------------------------------
 
 DELETE FROM scheme_eligibility_rules;
 
--- PMEGP Rules
+-- NSFDC Micro Finance Scheme (MFS) Rules
+INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
+('nsfdc_mfs_2026', 'age', '>=', '18', 'Minimum age 18 years'),
+('nsfdc_mfs_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
+('nsfdc_mfs_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
+('nsfdc_mfs_2026', 'estimatedCost', '<=', '140000', 'Maximum unit project cost ₹1.40 Lakhs');
+
+-- NSFDC Aajeevika Micro-Finance Yojana (AMY) Rules
+INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
+('nsfdc_amy_2026', 'age', '>=', '18', 'Minimum age 18 years'),
+('nsfdc_amy_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
+('nsfdc_amy_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
+('nsfdc_amy_2026', 'estimatedCost', '<=', '150000', 'Maximum micro credit facility ₹1.50 Lakhs');
+
+-- NSFDC Term Loan Scheme Rules
+INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
+('nsfdc_term_loan_2026', 'age', '>=', '18', 'Minimum age 18 years'),
+('nsfdc_term_loan_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
+('nsfdc_term_loan_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
+('nsfdc_term_loan_2026', 'estimatedCost', '<=', '1500000', 'Maximum loan assistance ₹15 Lakhs');
+
+-- NSFDC Udyam Nidhi Yojana (UNY) Rules
+INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
+('nsfdc_uny_2026', 'age', '>=', '18', 'Minimum age 18 years'),
+('nsfdc_uny_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
+('nsfdc_uny_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) with valid caste certificate'),
+('nsfdc_uny_2026', 'minEducation', '>=', '10th_pass', 'Technical / professional qualification preferred'),
+('nsfdc_uny_2026', 'estimatedCost', '<=', '1000000', 'Maximum loan facility ₹10 Lakhs');
+
+-- NSFDC Educational Loan Scheme (ELS) Rules
+INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
+('nsfdc_els_2026', 'age', '>=', '18', 'Minimum age 18 years'),
+('nsfdc_els_2026', 'annualIncome', '<=', '500000', 'Annual family income ceiling ₹5,00,000 p.a. (Jan 7, 2026 Revision)'),
+('nsfdc_els_2026', 'socialCategory', '==', 'SC', 'Must belong to Scheduled Caste (SC) student'),
+('nsfdc_els_2026', 'minEducation', '>=', '12th_pass', 'Higher secondary / admission to professional degree'),
+('nsfdc_els_2026', 'estimatedCost', '<=', '2000000', 'Maximum educational credit ₹20 Lakhs (India)');
+
+-- General Secondary Schemes Rules
 INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
 ('pmegp_2026', 'age', '>=', '18', 'Minimum age 18 years'),
-('pmegp_2026', 'age', '<=', '65', 'Maximum age 65 years'),
-('pmegp_2026', 'estimatedCost', '>=', '50000', 'Minimum project cost ₹50,000'),
-('pmegp_2026', 'estimatedCost', '<=', '5000000', 'Maximum project cost ₹50 Lakhs (Mfg) / ₹20 Lakhs (Service)'),
-('pmegp_2026', 'isFirstGeneration', '==', 'true', 'Must be greenfield / first-generation project');
-
--- Stand-Up India Rules
-INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
-('standup_india_2026', 'age', '>=', '18', 'Minimum age 18 years'),
-('standup_india_2026', 'estimatedCost', '>=', '1000000', 'Minimum project cost ₹10 Lakhs'),
-('standup_india_2026', 'estimatedCost', '<=', '10000000', 'Maximum project cost ₹1 Crore'),
-('standup_india_2026', 'isFirstGeneration', '==', 'true', 'Must be greenfield project'),
-('standup_india_2026', 'category_or_gender', 'in', 'SC,ST,female', 'Targeted for SC/ST or Female entrepreneurs');
-
--- PM MUDRA Tarun Rules
-INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
-('mudra_tarun_2026', 'age', '>=', '18', 'Minimum age 18 years'),
-('mudra_tarun_2026', 'estimatedCost', '<=', '1000000', 'Maximum loan amount ₹10 Lakhs');
-
--- PM SVANidhi Rules
-INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
-('pmsvanidhi_2026', 'age', '>=', '18', 'Minimum age 18 years'),
-('pmsvanidhi_2026', 'annualIncome', '<=', '300000', 'Annual family income under ₹3 Lakhs'),
-('pmsvanidhi_2026', 'estimatedCost', '<=', '100000', 'Maximum credit facility ₹50,000');
-
--- PM Vishwakarma Rules
-INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
-('pm_vishwakarma_2026', 'age', '>=', '18', 'Minimum age 18 years'),
-('pm_vishwakarma_2026', 'estimatedCost', '<=', '300000', 'Maximum loan facility ₹3 Lakhs'),
-('pm_vishwakarma_2026', 'projectType', 'in', 'handicraft_artisan,manufacturing,services', 'Traditional artisan / craft trades');
+('pmegp_2026', 'estimatedCost', '<=', '5000000', 'Maximum project cost ₹50 Lakhs (Mfg)'),
+('standup_india_2026', 'category_or_gender', 'in', 'SC,ST,female', 'Targeted for SC/ST or Female entrepreneurs'),
+('mudra_tarun_2026', 'estimatedCost', '<=', '1000000', 'Maximum loan amount ₹10 Lakhs'),
+('pmsvanidhi_2026', 'estimatedCost', '<=', '100000', 'Maximum credit facility ₹50,000'),
+('pm_vishwakarma_2026', 'estimatedCost', '<=', '300000', 'Maximum loan facility ₹3 Lakhs');
 
 
 -- ------------------------------------------------------------------------------
@@ -261,6 +368,24 @@ INSERT INTO channel_partners (
     'pnb.microcredit.delhi@pnb.co.in',
     'Sunita Sharma (Chief Nodal Officer)',
     'https://pnbindia.in',
+    '2026-03-01',
+    'Prototype Partner Data'
+),
+(
+    'partner_kscdc_007',
+    'Karnataka State SC & ST Development Corporation (SCA)',
+    'dic',
+    'District Nodal Facilitation Office',
+    'Dr. B.R. Ambedkar Bhavan, Millers Road, Vasanth Nagar',
+    'Bengaluru',
+    'Karnataka',
+    '560052',
+    12.9880000,
+    77.5940000,
+    '+91 80 2286 4501',
+    'kscdc.bengaluru@karnataka.gov.in',
+    'Manjunath Swamy (District Nodal Executive, SCA)',
+    'https://nsfdc.nic.in/',
     '2026-03-01',
     'Prototype Partner Data'
 ),
@@ -352,34 +477,49 @@ ON CONFLICT (id) DO UPDATE SET
 
 INSERT INTO partner_schemes (partner_id, scheme_id) VALUES
 -- SBI Koramangala
+('partner_sbi_001', 'nsfdc_mfs_2026'),
+('partner_sbi_001', 'nsfdc_amy_2026'),
+('partner_sbi_001', 'nsfdc_term_loan_2026'),
+('partner_sbi_001', 'nsfdc_uny_2026'),
+('partner_sbi_001', 'nsfdc_els_2026'),
 ('partner_sbi_001', 'pmegp_2026'),
 ('partner_sbi_001', 'standup_india_2026'),
-('partner_sbi_001', 'mudra_tarun_2026'),
-('partner_sbi_001', 'pm_vishwakarma_2026'),
 
 -- PNB Connaught Place
+('partner_pnb_002', 'nsfdc_mfs_2026'),
+('partner_pnb_002', 'nsfdc_amy_2026'),
+('partner_pnb_002', 'nsfdc_term_loan_2026'),
+('partner_pnb_002', 'nsfdc_uny_2026'),
 ('partner_pnb_002', 'pmegp_2026'),
-('partner_pnb_002', 'standup_india_2026'),
-('partner_pnb_002', 'mudra_tarun_2026'),
 ('partner_pnb_002', 'pmsvanidhi_2026'),
 
+-- KSCDC SCA Bengaluru
+('partner_kscdc_007', 'nsfdc_mfs_2026'),
+('partner_kscdc_007', 'nsfdc_amy_2026'),
+('partner_kscdc_007', 'nsfdc_term_loan_2026'),
+('partner_kscdc_007', 'nsfdc_uny_2026'),
+('partner_kscdc_007', 'nsfdc_els_2026'),
+
 -- DIC Bengaluru
+('partner_dic_003', 'nsfdc_mfs_2026'),
+('partner_dic_003', 'nsfdc_term_loan_2026'),
+('partner_dic_003', 'nsfdc_uny_2026'),
 ('partner_dic_003', 'pmegp_2026'),
-('partner_dic_003', 'pm_vishwakarma_2026'),
-('partner_dic_003', 'standup_india_2026'),
 
 -- CSC Patna
+('partner_csc_004', 'nsfdc_mfs_2026'),
+('partner_csc_004', 'nsfdc_amy_2026'),
 ('partner_csc_004', 'pmsvanidhi_2026'),
-('partner_csc_004', 'mudra_tarun_2026'),
-('partner_csc_004', 'pm_vishwakarma_2026'),
 
 -- KVGB Dharwad
-('partner_rrb_005', 'pmegp_2026'),
-('partner_rrb_005', 'mudra_tarun_2026'),
-('partner_rrb_005', 'pm_vishwakarma_2026'),
+('partner_rrb_005', 'nsfdc_mfs_2026'),
+('partner_rrb_005', 'nsfdc_amy_2026'),
+('partner_rrb_005', 'nsfdc_term_loan_2026'),
 
 -- Canara RSETI Ramanagara
-('partner_canara_006', 'pmegp_2026'),
-('partner_canara_006', 'pm_vishwakarma_2026'),
-('partner_canara_006', 'standup_india_2026')
+('partner_canara_006', 'nsfdc_mfs_2026'),
+('partner_canara_006', 'nsfdc_amy_2026'),
+('partner_canara_006', 'nsfdc_term_loan_2026'),
+('partner_canara_006', 'nsfdc_uny_2026'),
+('partner_canara_006', 'nsfdc_els_2026')
 ON CONFLICT (partner_id, scheme_id) DO NOTHING;

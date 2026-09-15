@@ -14,7 +14,7 @@ export const DEMO_PARTNERS: ChannelPartner[] = [
     longitude: 77.6245,
     contactPhone: '+91 80 2553 4421',
     contactEmail: 'sbi.msme.koramangala@sbi.co.in',
-    supportedSchemeIds: ['pmegp_2026', 'standup_india_2026', 'mudra_tarun_2026', 'pm_vishwakarma_2026'],
+    supportedSchemeIds: ['nsfdc_mfs_2026', 'nsfdc_amy_2026', 'nsfdc_term_loan_2026', 'nsfdc_uny_2026', 'nsfdc_els_2026', 'pmegp_2026', 'standup_india_2026', 'mudra_tarun_2026', 'pm_vishwakarma_2026'],
     nodalOfficerName: 'Rajesh Kumar (Lead District Nodal Manager)',
     isDemoData: true
   },
@@ -31,8 +31,25 @@ export const DEMO_PARTNERS: ChannelPartner[] = [
     longitude: 77.2167,
     contactPhone: '+91 11 2332 8901',
     contactEmail: 'pnb.microcredit.delhi@pnb.co.in',
-    supportedSchemeIds: ['pmegp_2026', 'standup_india_2026', 'mudra_tarun_2026', 'pmsvanidhi_2026'],
+    supportedSchemeIds: ['nsfdc_mfs_2026', 'nsfdc_amy_2026', 'nsfdc_term_loan_2026', 'nsfdc_uny_2026', 'pmegp_2026', 'standup_india_2026', 'mudra_tarun_2026', 'pmsvanidhi_2026'],
     nodalOfficerName: 'Sunita Sharma (Chief Nodal Officer)',
+    isDemoData: true
+  },
+  {
+    id: 'partner_kscdc_007',
+    name: 'Karnataka State SC & ST Development Corporation (SCA)',
+    type: 'dic',
+    branchName: 'District Nodal Facilitation Office',
+    address: 'Dr. B.R. Ambedkar Bhavan, Millers Road, Vasanth Nagar',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    pinCode: '560052',
+    latitude: 12.9880,
+    longitude: 77.5940,
+    contactPhone: '+91 80 2286 4501',
+    contactEmail: 'kscdc.bengaluru@karnataka.gov.in',
+    supportedSchemeIds: ['nsfdc_mfs_2026', 'nsfdc_amy_2026', 'nsfdc_term_loan_2026', 'nsfdc_uny_2026', 'nsfdc_els_2026'],
+    nodalOfficerName: 'Manjunath Swamy (District Nodal Executive, SCA)',
     isDemoData: true
   },
   {
@@ -48,7 +65,7 @@ export const DEMO_PARTNERS: ChannelPartner[] = [
     longitude: 77.5526,
     contactPhone: '+91 80 2330 1199',
     contactEmail: 'dic.bengaluru@karnataka.gov.in',
-    supportedSchemeIds: ['pmegp_2026', 'pm_vishwakarma_2026', 'standup_india_2026'],
+    supportedSchemeIds: ['nsfdc_mfs_2026', 'nsfdc_term_loan_2026', 'nsfdc_uny_2026', 'pmegp_2026', 'pm_vishwakarma_2026', 'standup_india_2026'],
     nodalOfficerName: 'Anil Deshmukh (General Manager, DIC)',
     isDemoData: true
   },
@@ -65,7 +82,7 @@ export const DEMO_PARTNERS: ChannelPartner[] = [
     longitude: 85.1235,
     contactPhone: '+91 612 220 5410',
     contactEmail: 'csc.patna.central@digitalseva.gov.in',
-    supportedSchemeIds: ['pmsvanidhi_2026', 'mudra_tarun_2026', 'pm_vishwakarma_2026'],
+    supportedSchemeIds: ['nsfdc_mfs_2026', 'nsfdc_amy_2026', 'pmsvanidhi_2026', 'mudra_tarun_2026', 'pm_vishwakarma_2026'],
     nodalOfficerName: 'Priya Verma (VLE Centre Manager)',
     isDemoData: true
   },
@@ -82,7 +99,7 @@ export const DEMO_PARTNERS: ChannelPartner[] = [
     longitude: 75.0078,
     contactPhone: '+91 836 244 8700',
     contactEmail: 'kvgb.dharwad@kvgbank.com',
-    supportedSchemeIds: ['pmegp_2026', 'mudra_tarun_2026', 'pm_vishwakarma_2026'],
+    supportedSchemeIds: ['nsfdc_mfs_2026', 'nsfdc_amy_2026', 'nsfdc_term_loan_2026', 'pmegp_2026', 'mudra_tarun_2026', 'pm_vishwakarma_2026'],
     nodalOfficerName: 'Venkatesh Rao (Branch Manager)',
     isDemoData: true
   },
@@ -99,7 +116,7 @@ export const DEMO_PARTNERS: ChannelPartner[] = [
     longitude: 77.4260,
     contactPhone: '+91 80 2727 3400',
     contactEmail: 'canara.rseti.ram@canarabank.com',
-    supportedSchemeIds: ['pmegp_2026', 'pm_vishwakarma_2026', 'standup_india_2026'],
+    supportedSchemeIds: ['nsfdc_mfs_2026', 'nsfdc_amy_2026', 'nsfdc_term_loan_2026', 'nsfdc_uny_2026', 'nsfdc_els_2026', 'pmegp_2026', 'pm_vishwakarma_2026', 'standup_india_2026'],
     nodalOfficerName: 'Ramesh Babu (Director RSETI)',
     isDemoData: true
   }

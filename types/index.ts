@@ -73,6 +73,10 @@ export interface Scheme {
   // Deterministic Rules
   rules: SchemeRuleDefinition;
   
+  // Scheme categorization & NSFDC alignment
+  isNsfdcScheme?: boolean;
+  categoryTag?: string; // 'NSFDC Primary Scheme' | 'General Credit Scheme'
+
   // Verification details
   officialSourceUrl: string;
   lastVerifiedDate: string;
