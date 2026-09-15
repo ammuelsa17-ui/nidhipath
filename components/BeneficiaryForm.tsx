@@ -9,10 +9,10 @@ interface Props {
 
 const PRESET_PERSONAS: { name: string; tag: string; profile: BeneficiaryProfile }[] = [
   {
-    name: 'SC Beneficiary – Micro Entrepreneur',
-    tag: 'SC Category • Stand-Up India & PMEGP',
+    name: 'Demonstration Profile: Ramesh (SC Youth)',
+    tag: 'SC Category • Stand-Up India & PMEGP Rules',
     profile: {
-      applicantName: 'Ramesh Naik',
+      applicantName: 'Ramesh Naik (Demo Profile)',
       age: 29,
       gender: 'male',
       socialCategory: 'SC',
@@ -30,10 +30,10 @@ const PRESET_PERSONAS: { name: string; tag: string; profile: BeneficiaryProfile 
     }
   },
   {
-    name: 'Sunita (Rural Woman Micro-Entrepreneur)',
-    tag: 'Matches PMEGP 35% Subsidy',
+    name: 'Demonstration Profile: Sunita (Rural Woman)',
+    tag: 'Matches PMEGP 35% Rural Subsidy',
     profile: {
-      applicantName: 'Sunita Devi',
+      applicantName: 'Sunita Devi (Demo Profile)',
       age: 32,
       gender: 'female',
       socialCategory: 'OBC',
@@ -51,10 +51,10 @@ const PRESET_PERSONAS: { name: string; tag: string; profile: BeneficiaryProfile 
     }
   },
   {
-    name: 'Mohd. Salim (Urban Micro Vendor)',
+    name: 'Demonstration Profile: Mohd. Salim (Micro Vendor)',
     tag: 'Matches PM SVANidhi',
     profile: {
-      applicantName: 'Mohd. Salim',
+      applicantName: 'Mohd. Salim (Demo Profile)',
       age: 41,
       gender: 'male',
       socialCategory: 'MINORITY',
@@ -100,7 +100,7 @@ export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfi
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Progressive Disclosure Assessment</h2>
-              <p className="text-xs text-slate-300">Step {currentStep} of 2: {currentStep === 1 ? 'Demographic & Socio-Economic Profile' : 'Financial Need & Project Metrics'}</p>
+              <p className="text-xs text-slate-300">Step {currentStep} of 2: {currentStep === 1 ? 'About You (Basic Profile & Socio-Economic)' : 'Your Need (Financial Metrics & Project)'}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -113,7 +113,7 @@ export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfi
                   : 'bg-slate-800 text-slate-300 border border-slate-700 hover:text-white'
               }`}
             >
-              1. Basic Profile
+              1. About You
             </button>
             <button
               type="button"
@@ -124,7 +124,7 @@ export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfi
                   : 'bg-slate-800 text-slate-300 border border-slate-700 hover:text-white'
               }`}
             >
-              2. Need & Project
+              2. Your Need
             </button>
           </div>
         </div>
@@ -134,7 +134,7 @@ export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfi
       <div className="bg-slate-50 border-b border-slate-200 p-4">
         <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-700 uppercase tracking-wider">
           <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-          <span>1-Click Demo Personas:</span>
+          <span>1-Click Demonstration Profiles:</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {PRESET_PERSONAS.map((p, idx) => (

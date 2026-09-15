@@ -101,30 +101,30 @@ export const PartnerRouter: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {/* Assistance Action Buttons: Chat / Call / Visit */}
+                {/* Assistance Action Buttons: Chat / Call Partner / Visit Guidance */}
                 <div className="pt-3 border-t border-slate-200 space-y-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase font-mono block">Customer Assistance Flow:</span>
-                  <div className="grid grid-cols-3 gap-2">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase font-mono block">Prototype Partner Data • Assistance Flow:</span>
+                  <div className="grid grid-cols-3 gap-1.5">
                     <button
                       onClick={() => setChatPartner(p)}
-                      className="inline-flex items-center justify-center space-x-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-2 rounded-lg transition-colors shadow-sm"
+                      className="inline-flex items-center justify-center space-x-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-2 px-1.5 rounded-lg transition-colors shadow-sm"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>Chat</span>
                     </button>
                     <button
                       onClick={() => setCallPartner(p)}
-                      className="inline-flex items-center justify-center space-x-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2 rounded-lg transition-colors shadow-sm"
+                      className="inline-flex items-center justify-center space-x-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-2 px-1.5 rounded-lg transition-colors shadow-sm"
                     >
                       <Phone className="w-3.5 h-3.5" />
-                      <span>Call</span>
+                      <span>Call Partner</span>
                     </button>
                     <button
                       onClick={() => setVisitPartner(p)}
-                      className="inline-flex items-center justify-center space-x-1 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-2 px-2 rounded-lg transition-colors shadow-sm"
+                      className="inline-flex items-center justify-center space-x-1 bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold py-2 px-1.5 rounded-lg transition-colors shadow-sm"
                     >
                       <MapPin className="w-3.5 h-3.5" />
-                      <span>Visit</span>
+                      <span>Visit Guidance</span>
                     </button>
                   </div>
                 </div>

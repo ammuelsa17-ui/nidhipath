@@ -194,6 +194,7 @@ export const EligibilityResults: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
                     <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span className="font-semibold text-slate-700">Prototype Dataset • Based on Official Sources</span>
+                    <span className="text-slate-400 text-[11px] font-mono">(Verified: {item.scheme.lastVerifiedDate || '2026-03-01'})</span>
                     <span className="text-slate-300">|</span>
                     <a
                       href={item.scheme.officialSourceUrl}

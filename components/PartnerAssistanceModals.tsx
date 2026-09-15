@@ -29,18 +29,18 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'assistant',
-      text: `Hello! Welcome to NidhiPath Partner Assistance for ${partner.branchName} (${partner.name}). How can I assist you regarding your application for ${selectedSchemeName}?`,
+      text: `Hello! Welcome to NidhiPath Partner Assistance. I provide AI-guided assistance based on available scheme information for ${selectedSchemeName} at ${partner.branchName} (${partner.name}). How can I assist you today?`,
       timestamp: 'Just now'
     }
   ]);
   const [inputQuery, setInputQuery] = useState('');
 
   const quickPrompts = [
-    'What documents should I carry?',
-    'Do I need to visit the office in person?',
-    'What should I ask the nodal officer?',
-    'Where is the office located?',
-    'What is the next step for subsidy?'
+    'What documents are typically required?',
+    'What are the branch working hours?',
+    'What questions should I ask the partner?',
+    'Where is the branch located?',
+    'What is the typical subsidy process?'
   ];
 
   const handleSend = (textToSend?: string) => {
@@ -58,15 +58,15 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
 
     const q = query.toLowerCase();
     if (q.includes('document')) {
-      replyText = `For ${selectedSchemeName} processing at ${partner.branchName}, bring: 1) Aadhaar Card & PAN Card, 2) Social Category / Caste Certificate (SC/ST/OBC), 3) Detailed Project Report (DPR) / Cost Estimate, 4) Bank Account Passbook / 6-Month Statement, 5) Passport-size Photographs.`;
-    } else if (q.includes('visit') || q.includes('office')) {
-      replyText = `${partner.branchName} is located at ${partner.address}, ${partner.city}, ${partner.state} - ${partner.pinCode}. Working hours are usually 10:00 AM - 5:00 PM on business days.`;
+      replyText = `Typical documents may include identity, income/category proof and project-related documents. Exact requirements depend on the scheme and institution. Please confirm the final checklist with the partner.`;
+    } else if (q.includes('visit') || q.includes('office') || q.includes('hour') || q.includes('timing') || q.includes('located')) {
+      replyText = `${partner.branchName} is located at ${partner.address}, ${partner.city}, ${partner.state} - ${partner.pinCode}. Working hours may vary. Please confirm with the partner before visiting.`;
     } else if (q.includes('ask') || q.includes('question')) {
-      replyText = `When speaking with Nodal Officer ${partner.nodalOfficerName || 'Branch Manager'}, ask: 1) "Has the margin money subsidy target for ${selectedSchemeName} been allocated for this quarter?", 2) "What is the expected CGTMSE / CGFSI credit guarantee processing duration?", 3) "Can I get a checklist for loan appraisal?"`;
-    } else if (q.includes('subsidy') || q.includes('next step')) {
-      replyText = `Next Step: Submit your basic DPR and documents to ${partner.branchName}. Once the credit committee approves your loan application, the margin money subsidy request will be submitted through the nodal agency portal.`;
+      replyText = `Questions to confirm with the partner: 1) Scheme margin money / subsidy target status for this quarter, 2) Applicable credit guarantee options (e.g. CGTMSE), 3) Appraisal document checklist. Exact requirements depend on the institution.`;
+    } else if (q.includes('subsidy') || q.includes('process') || q.includes('next step')) {
+      replyText = `The exact application and subsidy process depends on the applicable scheme and authorized institution. Please confirm the process with the partner.`;
     } else {
-      replyText = `This information requires confirmation from the Channel Partner. Please call the partner or visit the office.`;
+      replyText = `This information requires confirmation from the authorized partner. Please call or visit the partner.`;
       requiresConfirmation = true;
     }
 
@@ -92,7 +92,7 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
             </div>
             <div>
               <h3 className="text-sm font-bold text-white">NidhiPath Partner Assistance</h3>
-              <p className="text-[11px] text-slate-300">{partner.branchName} • {partner.name}</p>
+              <p className="text-[11px] text-slate-300">AI-guided assistance based on available scheme information.</p>
             </div>
           </div>
           <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white">
@@ -103,7 +103,7 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
         {/* System Disclaimer */}
         <div className="bg-amber-50 border-b border-amber-200 p-2.5 text-[11px] text-amber-900 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-          <span>This assistant provides guidance based on verified scheme guidelines. It is not an employee of {partner.name}.</span>
+          <span>It is not a live chat with the Channel Partner. Answers are based on available scheme guidelines.</span>
         </div>
 
         {/* Messages Body */}
@@ -119,7 +119,7 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
                 {msg.isConfirmationNeeded && (
                   <div className="mt-2 pt-2 border-t border-slate-200 text-[11px] text-amber-800 font-semibold flex items-center gap-1">
                     <Phone className="w-3 h-3 text-amber-600" />
-                    <span>Action Required: Call or Visit branch for official confirmation.</span>
+                    <span>Action Required: Please call or visit the partner for confirmation.</span>
                   </div>
                 )}
                 <span className="block text-[9px] text-slate-400 mt-1 text-right">{msg.timestamp}</span>
@@ -130,7 +130,7 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
 
         {/* Quick Prompts */}
         <div className="p-2.5 bg-white border-t border-slate-200 flex flex-wrap gap-1.5">
-          <span className="text-[10px] font-bold text-slate-400 uppercase w-full">Quick Demo Questions:</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase w-full">Frequently Asked Questions:</span>
           {quickPrompts.map((qp, i) => (
             <button
               key={i}
@@ -149,7 +149,7 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
             value={inputQuery}
             onChange={e => setInputQuery(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSend()}
-            placeholder="Ask a question about partner assistance..."
+            placeholder="Ask about scheme guidelines or documents..."
             className="flex-1 px-3 py-2 bg-slate-100 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
           />
           <button
@@ -174,8 +174,8 @@ export const PartnerCallModal: React.FC<CallModalProps> = ({ partner, onClose })
               <Phone className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Call Channel Partner</h3>
-              <p className="text-xs text-slate-500">Nodal Branch Direct Contact</p>
+              <h3 className="text-sm font-bold text-slate-900">Call Partner</h3>
+              <p className="text-xs text-slate-500">Prototype Contact Information</p>
             </div>
           </div>
           <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400">
@@ -189,23 +189,28 @@ export const PartnerCallModal: React.FC<CallModalProps> = ({ partner, onClose })
             <strong className="text-slate-900 text-sm font-bold">{partner.name} — {partner.branchName}</strong>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-mono">Nodal Officer</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-mono">Designated Officer</span>
             <strong className="text-slate-800">{partner.nodalOfficerName || 'Branch Nodal Manager'}</strong>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-mono">Official Phone Number</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-mono">Prototype Contact Number</span>
             <a href={`tel:${partner.contactPhone}`} className="text-emerald-700 font-mono text-base font-extrabold hover:underline">
               {partner.contactPhone}
             </a>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-mono">Official Email</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-mono">Prototype Contact Email</span>
             <span className="font-mono text-slate-700">{partner.contactEmail}</span>
           </div>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg text-[11px] text-amber-900 italic">
-          ℹ️ <strong>Prototype Partner Data:</strong> Phone number and officer details represent structured prototype records for demonstration. Production deployment connects authorized institutional directory data.
+        <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg text-[11px] text-amber-900 space-y-1">
+          <p className="font-bold flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-700" /> Prototype Partner Data
+          </p>
+          <p className="text-amber-800">
+            Prototype contact data — production requires authorized institutional contact data. Production deployment requires authorized and current Channel Partner data.
+          </p>
         </div>
 
         <div className="flex justify-end gap-2 pt-2">
@@ -216,7 +221,7 @@ export const PartnerCallModal: React.FC<CallModalProps> = ({ partner, onClose })
             href={`tel:${partner.contactPhone}`}
             className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg inline-flex items-center gap-1.5 shadow-sm"
           >
-            <Phone className="w-3.5 h-3.5" /> Call Now
+            <Phone className="w-3.5 h-3.5" /> Call Partner
           </a>
         </div>
       </div>
@@ -236,8 +241,8 @@ export const PartnerVisitModal: React.FC<VisitModalProps> = ({ partner, onClose 
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Visit Channel Partner Branch</h3>
-              <p className="text-xs text-slate-500">Physical Nodal Office Location</p>
+              <h3 className="text-sm font-bold text-slate-900">Visit Guidance</h3>
+              <p className="text-xs text-slate-500">Physical Branch Location</p>
             </div>
           </div>
           <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400">
@@ -268,9 +273,9 @@ export const PartnerVisitModal: React.FC<VisitModalProps> = ({ partner, onClose 
 
         <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-[11px] text-blue-900 space-y-1">
           <p className="font-semibold flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Walk-in Nodal Office Guidance:
+            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Visit Guidance & Advice:
           </p>
-          <p className="text-slate-700">Please carry your printed DPR, Identity Proof (Aadhaar/PAN), and Income/Caste Certificate for direct walk-in consultation.</p>
+          <p className="text-slate-700">Please confirm office timings, availability and required documents before visiting. Production deployment requires authorized and current Channel Partner data.</p>
         </div>
 
         <div className="flex justify-end gap-2 pt-2">
