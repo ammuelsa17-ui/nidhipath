@@ -74,6 +74,7 @@ const PRESET_PERSONAS: { name: string; tag: string; profile: BeneficiaryProfile 
 ];
 
 export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfile }) => {
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [profile, setProfile] = useState<BeneficiaryProfile>(
     initialProfile || PRESET_PERSONAS[0].profile
   );
@@ -98,13 +99,34 @@ export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfi
               <UserCheck className="w-6 h-6 text-blue-300" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Step 1: Beneficiary Profile & Project Details</h2>
-              <p className="text-xs text-slate-300">Enter applicant demographics & proposed project metrics</p>
+              <h2 className="text-lg font-bold text-white">Progressive Disclosure Assessment</h2>
+              <p className="text-xs text-slate-300">Step {currentStep} of 2: {currentStep === 1 ? 'Demographic & Socio-Economic Profile' : 'Financial Need & Project Metrics'}</p>
             </div>
           </div>
-          <span className="text-xs bg-blue-500/20 text-blue-200 border border-blue-400/30 px-3 py-1 rounded-full font-medium self-start sm:self-auto">
-            Deterministic Rule Inputs
-          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              className={`px-3 py-1 text-xs rounded-full font-semibold transition-all ${
+                currentStep === 1
+                  ? 'bg-blue-600 text-white border border-blue-400'
+                  : 'bg-slate-800 text-slate-300 border border-slate-700 hover:text-white'
+              }`}
+            >
+              1. Basic Profile
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentStep(2)}
+              className={`px-3 py-1 text-xs rounded-full font-semibold transition-all ${
+                currentStep === 2
+                  ? 'bg-blue-600 text-white border border-blue-400'
+                  : 'bg-slate-800 text-slate-300 border border-slate-700 hover:text-white'
+              }`}
+            >
+              2. Need & Project
+            </button>
+          </div>
         </div>
       </div>
 
@@ -131,140 +153,144 @@ export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfi
 
       {/* Main Form */}
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
-        {/* Section A: Demographic Details */}
-        <div>
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-            <Sliders className="w-3.5 h-3.5 text-slate-400" /> Demographic & Socio-Economic Criteria
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Applicant Name</label>
-              <input
-                type="text"
-                value={profile.applicantName || ''}
-                onChange={e => setProfile({ ...profile, applicantName: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                placeholder="Name"
-              />
-            </div>
+        {/* Section A: Demographic Details (Step 1) */}
+        {(currentStep === 1 || true) && (
+          <div className={currentStep !== 1 ? 'hidden sm:block opacity-60' : ''}>
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center justify-between">
+              <span className="flex items-center gap-1.5"><Sliders className="w-3.5 h-3.5 text-slate-400" /> Step 1: Basic Profile & Socio-Economic Criteria</span>
+              <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-normal">Demographics & Category</span>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Applicant Name</label>
+                <input
+                  type="text"
+                  value={profile.applicantName || ''}
+                  onChange={e => setProfile({ ...profile, applicantName: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  placeholder="Name"
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Age (Years)</label>
-              <input
-                type="number"
-                min="18"
-                max="80"
-                value={profile.age}
-                onChange={e => setProfile({ ...profile, age: parseInt(e.target.value) || 18 })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Age (Years)</label>
+                <input
+                  type="number"
+                  min="18"
+                  max="80"
+                  value={profile.age}
+                  onChange={e => setProfile({ ...profile, age: parseInt(e.target.value) || 18 })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Gender</label>
-              <select
-                value={profile.gender}
-                onChange={e => setProfile({ ...profile, gender: e.target.value as Gender })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              >
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-                <option value="transgender">Transgender</option>
-              </select>
-            </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Gender</label>
+                <select
+                  value={profile.gender}
+                  onChange={e => setProfile({ ...profile, gender: e.target.value as Gender })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                >
+                  <option value="female">Female</option>
+                  <option value="male">Male</option>
+                  <option value="transgender">Transgender</option>
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Social Category</label>
-              <select
-                value={profile.socialCategory}
-                onChange={e => setProfile({ ...profile, socialCategory: e.target.value as SocialCategory })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              >
-                <option value="OBC">OBC (Other Backward Classes)</option>
-                <option value="SC">SC (Scheduled Caste)</option>
-                <option value="ST">ST (Scheduled Tribe)</option>
-                <option value="MINORITY">Minority Category</option>
-                <option value="GENERAL">General Category</option>
-                <option value="EX_SERVICEMAN">Ex-Serviceman</option>
-              </select>
-            </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Social Category</label>
+                <select
+                  value={profile.socialCategory}
+                  onChange={e => setProfile({ ...profile, socialCategory: e.target.value as SocialCategory })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                >
+                  <option value="OBC">OBC (Other Backward Classes)</option>
+                  <option value="SC">SC (Scheduled Caste)</option>
+                  <option value="ST">ST (Scheduled Tribe)</option>
+                  <option value="MINORITY">Minority Category</option>
+                  <option value="GENERAL">General Category</option>
+                  <option value="EX_SERVICEMAN">Ex-Serviceman</option>
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Education Status</label>
-              <select
-                value={profile.education}
-                onChange={e => setProfile({ ...profile, education: e.target.value as EducationLevel })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              >
-                <option value="10th_pass">10th Standard Pass</option>
-                <option value="8th_pass">8th Standard Pass</option>
-                <option value="12th_pass">12th Standard Pass</option>
-                <option value="graduate_plus">Graduate / Technical Degree</option>
-                <option value="below_8th">Below 8th Standard</option>
-                <option value="illiterate">No Formal Education</option>
-              </select>
-            </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Education Status</label>
+                <select
+                  value={profile.education}
+                  onChange={e => setProfile({ ...profile, education: e.target.value as EducationLevel })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                >
+                  <option value="10th_pass">10th Standard Pass</option>
+                  <option value="8th_pass">8th Standard Pass</option>
+                  <option value="12th_pass">12th Standard Pass</option>
+                  <option value="graduate_plus">Graduate / Technical Degree</option>
+                  <option value="below_8th">Below 8th Standard</option>
+                  <option value="illiterate">No Formal Education</option>
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Annual Family Income (₹)</label>
-              <input
-                type="number"
-                step="10000"
-                value={profile.annualIncome}
-                onChange={e => setProfile({ ...profile, annualIncome: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Annual Family Income (₹)</label>
+                <input
+                  type="number"
+                  step="10000"
+                  value={profile.annualIncome}
+                  onChange={e => setProfile({ ...profile, annualIncome: parseInt(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">PIN Code / Area</label>
-              <input
-                type="text"
-                maxLength={6}
-                value={profile.pinCode}
-                onChange={e => setProfile({ ...profile, pinCode: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
-                placeholder="560034"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">PIN Code / Area</label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={profile.pinCode}
+                  onChange={e => setProfile({ ...profile, pinCode: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                  placeholder="560034"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Location Area Type</label>
-              <div className="flex items-center space-x-4 pt-2">
-                <label className="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="locationType"
-                    value="rural"
-                    checked={profile.locationType === 'rural'}
-                    onChange={() => setProfile({ ...profile, locationType: 'rural' })}
-                    className="text-blue-600 focus:ring-blue-500 h-4 w-4"
-                  />
-                  <span className="ml-2">Rural Area (Higher Subsidy)</span>
-                </label>
-                <label className="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="locationType"
-                    value="urban"
-                    checked={profile.locationType === 'urban'}
-                    onChange={() => setProfile({ ...profile, locationType: 'urban' })}
-                    className="text-blue-600 focus:ring-blue-500 h-4 w-4"
-                  />
-                  <span className="ml-2">Urban Area</span>
-                </label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Location Area Type</label>
+                <div className="flex items-center space-x-4 pt-2">
+                  <label className="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="locationType"
+                      value="rural"
+                      checked={profile.locationType === 'rural'}
+                      onChange={() => setProfile({ ...profile, locationType: 'rural' })}
+                      className="text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    />
+                    <span className="ml-2">Rural Area (Higher Subsidy)</span>
+                  </label>
+                  <label className="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="locationType"
+                      value="urban"
+                      checked={profile.locationType === 'urban'}
+                      onChange={() => setProfile({ ...profile, locationType: 'urban' })}
+                      className="text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    />
+                    <span className="ml-2">Urban Area</span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Section B: Enterprise & Financial Requirements */}
-        <div className="pt-4 border-t border-slate-200">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-            <Sliders className="w-3.5 h-3.5 text-slate-400" /> Enterprise & Project Parameters
+        {/* Section B: Enterprise & Financial Requirements (Step 2) */}
+        <div className={`pt-4 border-t border-slate-200 ${currentStep !== 2 ? 'hidden sm:block' : ''}`}>
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center justify-between">
+            <span className="flex items-center gap-1.5"><Sliders className="w-3.5 h-3.5 text-slate-400" /> Step 2: Financial Need & Enterprise Project</span>
+            <span className="text-[10px] bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded">Financial Metrics</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -321,14 +347,32 @@ export const BeneficiaryForm: React.FC<Props> = ({ onProfileSubmit, initialProfi
           </div>
         </div>
 
-        {/* Form Submit Button */}
-        <div className="pt-4 flex justify-end">
+        {/* Form Controls / Navigation */}
+        <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          {currentStep === 1 ? (
+            <button
+              type="button"
+              onClick={() => setCurrentStep(2)}
+              className="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs px-4 py-2.5 rounded-lg transition-all"
+            >
+              <span>Proceed to Step 2: Financial Need →</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              className="inline-flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs px-4 py-2.5 rounded-lg transition-all"
+            >
+              <span>← Back to Step 1: Profile</span>
+            </button>
+          )}
+
           <button
             type="submit"
-            className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-6 py-3 rounded-lg shadow-md transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-6 py-3 rounded-lg shadow-md transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-auto"
           >
             <CheckCircle className="w-5 h-5" />
-            <span>Run Deterministic Eligibility Evaluation</span>
+            <span>Find Suitable Schemes & Evaluate Eligibility</span>
           </button>
         </div>
       </form>
