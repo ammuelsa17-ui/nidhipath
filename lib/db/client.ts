@@ -3,21 +3,140 @@ import { DEMO_SCHEMES } from '../../data/schemes';
 import { DEMO_PARTNERS } from '../../data/partners';
 
 /**
- * CLOUD POSTGRESQL DATA ACCESS LAYER
+ * CLOUD POSTGRESQL (SUPABASE) DATA ACCESS LAYER
  * Connects to process.env.DATABASE_URL in production server environments.
- * Credentials are NEVER exposed to the frontend.
+ * Credentials are NEVER exposed to the frontend/browser.
  */
+
+// Helper to get pg Pool with SSL configuration for Supabase / Cloud Postgres
+async function getPgPool(dbUrl: string) {
+  const { Pool } = await import('pg');
+  return new Pool({
+    connectionString: dbUrl,
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 5000
+  });
+}
+
+// Ensures Supabase PostgreSQL tables exist and are seeded with initial records if empty
+async function ensureTablesAndSeed(pool: any) {
+  try {
+    // Create schemes table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS schemes (
+        id VARCHAR(64) PRIMARY KEY,
+        code VARCHAR(32) NOT NULL UNIQUE,
+        name VARCHAR(255) NOT NULL,
+        short_name VARCHAR(128) NOT NULL,
+        ministry VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        target_audience TEXT NOT NULL,
+        maximum_loan_amount NUMERIC(15, 2) NOT NULL,
+        max_subsidy_percent NUMERIC(5, 2) NOT NULL,
+        interest_rate NUMERIC(5, 2) NOT NULL,
+        maximum_tenure INTEGER NOT NULL,
+        moratorium INTEGER NOT NULL,
+        collateral_required BOOLEAN DEFAULT FALSE,
+        source_url TEXT NOT NULL,
+        verification_date VARCHAR(64) NOT NULL,
+        data_status VARCHAR(64) DEFAULT 'Prototype Dataset • Based on Official Sources'
+      );
+    `);
+
+    // Create channel_partners table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS channel_partners (
+        id VARCHAR(64) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        partner_type VARCHAR(64) NOT NULL,
+        branch_name VARCHAR(255) NOT NULL,
+        address TEXT NOT NULL,
+        district VARCHAR(128) NOT NULL,
+        state VARCHAR(128) NOT NULL,
+        pincode VARCHAR(10) NOT NULL,
+        latitude NUMERIC(10, 7) NOT NULL,
+        longitude NUMERIC(10, 7) NOT NULL,
+        contact_phone VARCHAR(32) NOT NULL,
+        contact_email VARCHAR(128) NOT NULL,
+        nodal_officer_name VARCHAR(128),
+        source_url TEXT NOT NULL,
+        verification_date VARCHAR(64) NOT NULL,
+        data_status VARCHAR(64) DEFAULT 'Prototype Partner Data'
+      );
+    `);
+
+    // Seed schemes if empty
+    const schemeCheck = await pool.query('SELECT COUNT(*) FROM schemes');
+    if (parseInt(schemeCheck.rows[0].count, 10) === 0) {
+      for (const s of DEMO_SCHEMES) {
+        await pool.query(
+          `INSERT INTO schemes (id, code, name, short_name, ministry, description, target_audience, maximum_loan_amount, max_subsidy_percent, interest_rate, maximum_tenure, moratorium, collateral_required, source_url, verification_date)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+           ON CONFLICT (id) DO NOTHING`,
+          [
+            s.id,
+            s.code,
+            s.name,
+            s.shortName,
+            s.ministry,
+            s.description,
+            s.targetAudience,
+            s.maxLoanAmount,
+            s.maxSubsidyPercent,
+            s.interestRate,
+            s.maxTenureYears,
+            s.moratoriumMonths,
+            s.collateralRequired,
+            s.officialSourceUrl,
+            s.lastVerifiedDate || '2026-03-01'
+          ]
+        );
+      }
+    }
+
+    // Seed partners if empty
+    const partnerCheck = await pool.query('SELECT COUNT(*) FROM channel_partners');
+    if (parseInt(partnerCheck.rows[0].count, 10) === 0) {
+      for (const p of DEMO_PARTNERS) {
+        await pool.query(
+          `INSERT INTO channel_partners (id, name, partner_type, branch_name, address, district, state, pincode, latitude, longitude, contact_phone, contact_email, nodal_officer_name, source_url, verification_date)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+           ON CONFLICT (id) DO NOTHING`,
+          [
+            p.id,
+            p.name,
+            p.type,
+            p.branchName,
+            p.address,
+            p.city,
+            p.state,
+            p.pinCode,
+            p.latitude,
+            p.longitude,
+            p.contactPhone,
+            p.contactEmail,
+            p.nodalOfficerName || null,
+            'https://dge.gov.in',
+            '2026-03-01'
+          ]
+        );
+      }
+    }
+  } catch (err) {
+    console.warn('Supabase DB auto-schema/seed check warning:', err);
+  }
+}
 
 export async function fetchSchemesFromCloudDB(): Promise<Scheme[]> {
   const dbUrl = typeof process !== 'undefined' ? process.env.DATABASE_URL : undefined;
 
   if (dbUrl) {
     try {
-      // In production with DATABASE_URL, query PostgreSQL instance
-      const { Pool } = await import('pg');
-      const pool = new Pool({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } });
+      const pool = await getPgPool(dbUrl);
+      await ensureTablesAndSeed(pool);
       const res = await pool.query('SELECT * FROM schemes ORDER BY id');
       await pool.end();
+
       if (res.rows && res.rows.length > 0) {
         return res.rows.map(row => ({
           id: row.id,
@@ -40,11 +159,11 @@ export async function fetchSchemesFromCloudDB(): Promise<Scheme[]> {
         }));
       }
     } catch (err) {
-      console.warn('PostgreSQL fetch error, falling back to verified dataset:', err);
+      console.warn('Supabase PostgreSQL fetch error, falling back to verified dataset:', err);
     }
   }
 
-  // Pure fallback to verified structured dataset
+  // Fallback to verified structured dataset
   return DEMO_SCHEMES;
 }
 
@@ -53,10 +172,11 @@ export async function fetchPartnersFromCloudDB(): Promise<ChannelPartner[]> {
 
   if (dbUrl) {
     try {
-      const { Pool } = await import('pg');
-      const pool = new Pool({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } });
+      const pool = await getPgPool(dbUrl);
+      await ensureTablesAndSeed(pool);
       const res = await pool.query('SELECT * FROM channel_partners ORDER BY id');
       await pool.end();
+
       if (res.rows && res.rows.length > 0) {
         return res.rows.map(row => ({
           id: row.id,
@@ -77,9 +197,10 @@ export async function fetchPartnersFromCloudDB(): Promise<ChannelPartner[]> {
         }));
       }
     } catch (err) {
-      console.warn('PostgreSQL partner fetch error, falling back to verified dataset:', err);
+      console.warn('Supabase PostgreSQL partner fetch error, falling back to verified dataset:', err);
     }
   }
 
   return DEMO_PARTNERS;
 }
+
