@@ -152,9 +152,15 @@ export interface AIExplanationRequest {
   profile: BeneficiaryProfile;
   selectedSchemeResult: SchemeEligibilityResult;
   financialDetails?: EMIBreakdown;
+  selectedPartner?: ChannelPartner;
   nearbyPartners?: PartnerMatchResult[];
   language?: 'en' | 'hi' | 'ta' | 'te' | 'mr';
   userQuestion?: string;
+  messageHistory?: Array<{
+    role: 'user' | 'assistant';
+    text: string;
+  }>;
+  contextId?: string;
 }
 
 export interface AIExplanationResponse {

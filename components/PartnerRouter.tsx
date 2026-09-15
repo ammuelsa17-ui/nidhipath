@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PartnerMatchResult, ChannelPartner } from '../types';
+import { PartnerMatchResult, ChannelPartner, BeneficiaryProfile, SchemeEligibilityResult, EMIBreakdown } from '../types';
 import { MapPin, Navigation, Phone, Building2, ExternalLink, CheckCircle, MessageSquare } from 'lucide-react';
 import { PartnerChatModal, PartnerCallModal, PartnerVisitModal } from './PartnerAssistanceModals';
 
@@ -7,12 +7,20 @@ interface Props {
   partners: PartnerMatchResult[];
   pinCode: string;
   selectedSchemeName: string;
+  profile?: BeneficiaryProfile;
+  selectedSchemeResult?: SchemeEligibilityResult;
+  financialDetails?: EMIBreakdown | null;
+  language?: string;
 }
 
 export const PartnerRouter: React.FC<Props> = ({
   partners,
   pinCode,
-  selectedSchemeName
+  selectedSchemeName,
+  profile,
+  selectedSchemeResult,
+  financialDetails,
+  language
 }) => {
   const [chatPartner, setChatPartner] = useState<ChannelPartner | null>(null);
   const [callPartner, setCallPartner] = useState<ChannelPartner | null>(null);
@@ -140,6 +148,11 @@ export const PartnerRouter: React.FC<Props> = ({
           partner={chatPartner}
           selectedSchemeName={selectedSchemeName}
           onClose={() => setChatPartner(null)}
+          profile={profile}
+          selectedSchemeResult={selectedSchemeResult}
+          financialDetails={financialDetails}
+          language={language}
+          nearbyPartners={partners}
         />
       )}
       {callPartner && (

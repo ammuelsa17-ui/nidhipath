@@ -170,6 +170,9 @@ export default function HomePage() {
           partners={partners}
           pinCode={profile.pinCode}
           selectedSchemeName={selectedSchemeResult.scheme.shortName}
+          profile={profile}
+          selectedSchemeResult={selectedSchemeResult}
+          financialDetails={financialDetails}
         />
       </section>
 
@@ -183,6 +186,8 @@ export default function HomePage() {
           schemeResult={selectedSchemeResult}
           profile={profile}
           financialDetails={financialDetails}
+          topPartner={partners[0]?.partner}
+          nearbyPartners={partners}
         />
       </section>
     </div>

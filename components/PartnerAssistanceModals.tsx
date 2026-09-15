@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
-import { ChannelPartner } from '../types';
-import { MessageSquare, Phone, MapPin, X, Send, Bot, AlertTriangle, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChannelPartner, BeneficiaryProfile, SchemeEligibilityResult, EMIBreakdown, PartnerMatchResult, AIExplanationResponse } from '../types';
+import { getDynamicQuickPrompts } from '../lib/ai/prompts';
+import { MessageSquare, Phone, MapPin, X, Send, Bot, AlertTriangle, ExternalLink, ShieldCheck, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
 
 interface ChatModalProps {
   partner: ChannelPartner;
   selectedSchemeName: string;
   onClose: () => void;
+  profile?: BeneficiaryProfile;
+  selectedSchemeResult?: SchemeEligibilityResult;
+  financialDetails?: EMIBreakdown | null;
+  language?: string;
+  nearbyPartners?: PartnerMatchResult[];
 }
 
 interface CallModalProps {
@@ -23,62 +29,141 @@ interface ChatMessage {
   text: string;
   timestamp: string;
   isConfirmationNeeded?: boolean;
+  whyRecommended?: string[];
+  nextSteps?: string[];
 }
 
-export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSchemeName, onClose }) => {
+export const PartnerChatModal: React.FC<ChatModalProps> = ({
+  partner,
+  selectedSchemeName,
+  onClose,
+  profile,
+  selectedSchemeResult,
+  financialDetails,
+  language = 'en',
+  nearbyPartners
+}) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'assistant',
-      text: `Hello! Welcome to NidhiPath Partner Assistance. I provide AI-guided assistance based on available scheme information for ${selectedSchemeName} at ${partner.branchName} (${partner.name}). How can I assist you today?`,
+      text: `Hello! I am NidhiPath AI Guidance. I provide AI-guided assistance based on calculated scheme parameters and verified eligibility rules for ${selectedSchemeName} at ${partner.branchName} (${partner.name}). How can I assist you today?`,
       timestamp: 'Just now'
     }
   ]);
+  const [messageHistory, setMessageHistory] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
   const [inputQuery, setInputQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const quickPrompts = [
-    'What documents are typically required?',
-    'What are the branch working hours?',
-    'What questions should I ask the partner?',
-    'Where is the branch located?',
-    'What is the typical subsidy process?'
-  ];
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
-  const handleSend = (textToSend?: string) => {
-    const query = textToSend || inputQuery;
-    if (!query.trim()) return;
+  // Generate dynamic prompts based on current application context
+  const quickPrompts = getDynamicQuickPrompts({
+    selectedSchemeResult,
+    financialDetails,
+    selectedPartner: partner,
+    nearbyPartners,
+    language
+  });
+
+  const handleSend = async (textToSend?: string) => {
+    const query = (textToSend || inputQuery).trim();
+    if (!query || loading) return;
 
     const userMsg: ChatMessage = {
       sender: 'user',
       text: query,
-      timestamp: 'Just now'
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    let replyText = '';
-    let requiresConfirmation = false;
-
-    const q = query.toLowerCase();
-    if (q.includes('document')) {
-      replyText = `Typical documents may include identity, income/category proof and project-related documents. Exact requirements depend on the scheme and institution. Please confirm the final checklist with the partner.`;
-    } else if (q.includes('visit') || q.includes('office') || q.includes('hour') || q.includes('timing') || q.includes('located')) {
-      replyText = `${partner.branchName} is located at ${partner.address}, ${partner.city}, ${partner.state} - ${partner.pinCode}. Working hours may vary. Please confirm with the partner before visiting.`;
-    } else if (q.includes('ask') || q.includes('question')) {
-      replyText = `Questions to confirm with the partner: 1) Scheme margin money / subsidy target status for this quarter, 2) Applicable credit guarantee options (e.g. CGTMSE), 3) Appraisal document checklist. Exact requirements depend on the institution.`;
-    } else if (q.includes('subsidy') || q.includes('process') || q.includes('next step')) {
-      replyText = `The exact application and subsidy process depends on the applicable scheme and authorized institution. Please confirm the process with the partner.`;
-    } else {
-      replyText = `This information requires confirmation from the authorized partner. Please call or visit the partner.`;
-      requiresConfirmation = true;
-    }
-
-    const assistantMsg: ChatMessage = {
-      sender: 'assistant',
-      text: replyText,
-      timestamp: 'Just now',
-      isConfirmationNeeded: requiresConfirmation
-    };
-
-    setMessages(prev => [...prev, userMsg, assistantMsg]);
+    setMessages(prev => [...prev, userMsg]);
     if (!textToSend) setInputQuery('');
+    setLoading(true);
+
+    try {
+      if (profile && selectedSchemeResult) {
+        const res = await fetch('/api/explain', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            profile,
+            selectedSchemeResult,
+            financialDetails: financialDetails || undefined,
+            selectedPartner: partner,
+            nearbyPartners,
+            language,
+            userQuestion: query.slice(0, 500),
+            messageHistory: messageHistory.slice(-10)
+          })
+        });
+
+        if (res.ok) {
+          const data: AIExplanationResponse = await res.json();
+          let fullReplyText = data.summary;
+          if (data.eligibilityExplanation) {
+            fullReplyText += ` ${data.eligibilityExplanation}`;
+          }
+
+          const qLower = query.toLowerCase();
+          const requiresConfirmation = qLower.includes('appointment') ||
+                                        qLower.includes('live status') ||
+                                        qLower.includes('official sanction') ||
+                                        qLower.includes('file application');
+
+          const assistantMsg: ChatMessage = {
+            sender: 'assistant',
+            text: fullReplyText,
+            whyRecommended: data.whyRecommended,
+            nextSteps: data.nextSteps,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isConfirmationNeeded: requiresConfirmation
+          };
+
+          setMessages(prev => [...prev, assistantMsg]);
+          setMessageHistory(prev => {
+            const updated = [
+              ...prev,
+              { role: 'user' as const, text: query.slice(0, 500) },
+              { role: 'assistant' as const, text: fullReplyText.slice(0, 500) }
+            ];
+            return updated.slice(-10);
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Fallback response if context missing or fetch fails
+      const fallbackText = `NidhiPath AI Guidance for ${selectedSchemeName} at ${partner.branchName}: Answers are generated based on available scheme guidelines. Please contact or visit ${partner.name} for official institutional verification.`;
+      const assistantMsg: ChatMessage = {
+        sender: 'assistant',
+        text: fallbackText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isConfirmationNeeded: true
+      };
+
+      setMessages(prev => [...prev, assistantMsg]);
+      setMessageHistory(prev => [
+        ...prev,
+        { role: 'user' as const, text: query.slice(0, 500) },
+        { role: 'assistant' as const, text: fallbackText.slice(0, 500) }
+      ].slice(-10));
+    } catch (err) {
+      console.error('Error in partner chat AI explanation:', err);
+      setMessages(prev => [
+        ...prev,
+        {
+          sender: 'assistant',
+          text: `NidhiPath AI Guidance is unable to connect right now. Please check your network connection or call ${partner.name} directly.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isConfirmationNeeded: true
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,14 +173,25 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
         <div className="bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-600 rounded-lg text-white">
-              <Bot className="w-5 h-5" />
+              <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">NidhiPath Partner Assistance</h3>
-              <p className="text-[11px] text-slate-300">AI-guided assistance based on available scheme information.</p>
+              <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                NidhiPath AI Guidance
+                <span className="text-[10px] bg-blue-500/30 text-blue-300 font-mono px-2 py-0.5 rounded border border-blue-400/30">
+                  Unified Backend
+                </span>
+              </h3>
+              <p className="text-[11px] text-slate-300">
+                AI-guided assistance for <strong className="text-white">{partner.branchName}</strong> ({partner.name})
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white">
+          <button
+            onClick={onClose}
+            aria-label="Close AI guidance"
+            className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -103,39 +199,74 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
         {/* System Disclaimer */}
         <div className="bg-amber-50 border-b border-amber-200 p-2.5 text-[11px] text-amber-900 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-          <span>It is not a live chat with the Channel Partner. Answers are based on available scheme guidelines.</span>
+          <span>
+            <strong>AI Guidance Only:</strong> Not a live chat with channel partner staff. Answers use current application context and verified scheme guidelines.
+          </span>
         </div>
 
         {/* Messages Body */}
         <div className="p-4 flex-1 overflow-y-auto space-y-3 bg-slate-50">
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed ${
+              <div className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed space-y-2 ${
                 msg.sender === 'user'
                   ? 'bg-blue-600 text-white rounded-br-none'
                   : 'bg-white text-slate-800 border border-slate-200 shadow-sm rounded-bl-none'
               }`}>
                 <p>{msg.text}</p>
+
+                {msg.whyRecommended && msg.whyRecommended.length > 0 && (
+                  <div className="bg-blue-50/80 p-2 rounded-lg text-[11px] text-blue-900 space-y-1 border border-blue-100">
+                    <strong className="block text-[10px] uppercase font-mono text-blue-700">Key Recommended Reasons:</strong>
+                    <ul className="list-disc list-inside space-y-0.5">
+                      {msg.whyRecommended.map((r, i) => (
+                        <li key={i}>{r}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {msg.nextSteps && msg.nextSteps.length > 0 && (
+                  <div className="bg-slate-100 p-2 rounded-lg text-[11px] text-slate-800 space-y-1 border border-slate-200">
+                    <strong className="block text-[10px] uppercase font-mono text-slate-600">Recommended Next Steps:</strong>
+                    <ol className="list-decimal list-inside space-y-0.5">
+                      {msg.nextSteps.map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
                 {msg.isConfirmationNeeded && (
                   <div className="mt-2 pt-2 border-t border-slate-200 text-[11px] text-amber-800 font-semibold flex items-center gap-1">
-                    <Phone className="w-3 h-3 text-amber-600" />
-                    <span>Action Required: Please call or visit the partner for confirmation.</span>
+                    <Phone className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Action Required: Please call or visit the partner for official confirmation.</span>
                   </div>
                 )}
                 <span className="block text-[9px] text-slate-400 mt-1 text-right">{msg.timestamp}</span>
               </div>
             </div>
           ))}
+
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-white border border-slate-200 shadow-sm rounded-2xl rounded-bl-none p-3 text-xs text-slate-600 flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                <span>NidhiPath AI is processing guidance...</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Quick Prompts */}
         <div className="p-2.5 bg-white border-t border-slate-200 flex flex-wrap gap-1.5">
-          <span className="text-[10px] font-bold text-slate-400 uppercase w-full">Frequently Asked Questions:</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase w-full">Suggested Guidance Questions:</span>
           {quickPrompts.map((qp, i) => (
             <button
               key={i}
+              disabled={loading}
               onClick={() => handleSend(qp)}
-              className="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-2.5 py-1 rounded-full border border-slate-200 hover:border-blue-300 transition-all text-left"
+              className="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-2.5 py-1 rounded-full border border-slate-200 hover:border-blue-300 transition-all text-left disabled:opacity-50"
             >
               {qp}
             </button>
@@ -145,16 +276,20 @@ export const PartnerChatModal: React.FC<ChatModalProps> = ({ partner, selectedSc
         {/* Input Bar */}
         <div className="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={inputQuery}
+            disabled={loading}
             onChange={e => setInputQuery(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSend()}
-            placeholder="Ask about scheme guidelines or documents..."
-            className="flex-1 px-3 py-2 bg-slate-100 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="Ask NidhiPath AI about scheme rules, financial terms, or documents..."
+            className="flex-1 px-3 py-2 bg-slate-100 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-50"
           />
           <button
             onClick={() => handleSend()}
-            className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            disabled={loading || !inputQuery.trim()}
+            aria-label="Send message"
+            className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
           >
             <Send className="w-4 h-4" />
           </button>
