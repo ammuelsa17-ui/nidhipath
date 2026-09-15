@@ -19,21 +19,18 @@ The NidhiPath MVP is **100% demo-ready** and operational as a continuous single-
 
 ---
 
-## 2. COMPLETED MODULES
+## 2. PPT DECK TO PROTOTYPE MODULE MAPPING MATRIX
 
-| Module Path | Responsibility | Implementation Details |
-|---|---|---|
-| `types/index.ts` | Domain Data Models | Interfaces for BeneficiaryProfile, Scheme, EligibilityResult, EMIBreakdown, ChannelPartner, AIExplanation |
-| `data/schemes.ts` | Demo Scheme Database | 5 detailed schemes (PMEGP, Stand-Up India, MUDRA, PM SVANidhi, PM Vishwakarma) |
-| `data/partners.ts` | Demo Partner Database | 6 channel partners (SBI, PNB, DIC, CSC, KVGB, Canara RSETI) |
-| `lib/eligibility/engine.ts` | Deterministic Rule Evaluator | Evaluates age, income, project cost, category, gender, education, and greenfield criteria |
-| `lib/matching/ranker.ts` | Weighted Scoring Ranker | Scores eligible schemes from 0 to 100 based on coverage, interest, subsidy, and tenure |
-| `lib/finance/emi.ts` | EMI & Amortization Math | Standard loan EMI formula ($P \times r \times (1+r)^n / ((1+r)^n - 1)$) + 12-month schedule |
-| `lib/routing/partnerRouter.ts` | Haversine Partner Router | Great-circle distance calculations & PIN code geographic lookup |
-| `lib/ai/provider.ts` | AI Explanation Engine | Calls Gemini API or falls back to template explanation in EN, HI, TA, TE, MR |
-| `app/api/explain/route.ts` | AI Explanation API Route | Server route handling POST requests for AI guidance |
-| `components/*` | UI Components | Header, StatusBanner, BeneficiaryForm, EligibilityResults, FinancialCalculator, PartnerRouter, AIAssistant |
-| `app/page.tsx` | Continuous Journey Page | Single continuous flow linking all 5 steps |
+| PPT Module | Prototype Component / Module | Implementation Status |
+| :--- | :--- | :--- |
+| **1. Beneficiary Input** | Input Form (`components/BeneficiaryForm.tsx`) | ✅ 100% Complete |
+| **2. Verified Data Layer** | Scheme & Partner Dataset (`data/schemes.ts`, `data/partners.ts`) | ✅ 100% Complete |
+| **3. Eligibility Engine** | Rule Evaluator (`lib/eligibility/engine.ts`) | ✅ 100% Complete |
+| **4. Scheme Matching** | Ranked Recommendations (`lib/matching/ranker.ts`) | ✅ 100% Complete |
+| **5. Financial Calculator** | EMI & Subsidy Math (`lib/finance/emi.ts`) | ✅ 100% Complete |
+| **6. Geo-Spatial Router** | Partner Location Router (`lib/routing/partnerRouter.ts`) | ✅ 100% Complete |
+| **7. AI / Language** | Explanation & Translation (`lib/ai/provider.ts`) | ✅ 100% Complete |
+| **8. Final Guidance** | Complete Continuous Flow (`app/page.tsx`) | ✅ 100% Complete |
 
 ---
 
