@@ -61,7 +61,7 @@ export const FinancialCalculator: React.FC<Props> = ({
             <Calculator className="w-6 h-6 text-blue-300" />
           </div>
           <div>
-            <h2 className="text-lg font-bold">Step 3: Financial EMI & Subsidy Calculator</h2>
+            <h2 className="text-lg font-bold">Step 3 — Financial Calculator</h2>
             <p className="text-xs text-slate-300">
               Deterministic Loan Math for <strong className="text-white">{scheme.shortName}</strong>
             </p>
@@ -132,7 +132,7 @@ export const FinancialCalculator: React.FC<Props> = ({
               <strong className="text-slate-900 font-mono">{scheme.moratoriumMonths} Months</strong>
             </div>
             <div className="flex justify-between text-slate-600">
-              <span>Estimated Govt Subsidy:</span>
+              <span>Estimated Margin Money Subsidy:</span>
               <strong className="text-emerald-700 font-mono">{schemeResult.subsidyPercentageEstimated}%</strong>
             </div>
           </div>
@@ -154,12 +154,15 @@ export const FinancialCalculator: React.FC<Props> = ({
 
             {/* Estimated Subsidy Savings Card */}
             <div className="bg-emerald-50 text-emerald-900 p-5 rounded-xl border border-emerald-200">
-              <span className="text-xs text-emerald-700 font-medium block mb-1">Est. Govt Subsidy Discount</span>
+              <span className="text-xs text-emerald-700 font-medium block mb-1">Estimated Margin Money Subsidy</span>
               <div className="text-2xl font-extrabold text-emerald-700 font-mono">
                 ₹{emiDetails.estimatedSubsidyAmount.toLocaleString('en-IN')}
               </div>
-              <span className="text-[11px] text-emerald-800 mt-2 block">
+              <span className="text-[10px] text-emerald-800 mt-2 block font-medium">
                 {schemeResult.subsidyPercentageEstimated}% Margin Subvention
+              </span>
+              <span className="text-[9px] text-slate-500 mt-1 block italic">
+                *Subject to applicable scheme rules, bank sanction & conditions.
               </span>
             </div>
 

@@ -35,7 +35,7 @@ export const PartnerRouter: React.FC<Props> = ({
             <Navigation className="w-6 h-6 text-blue-300" />
           </div>
           <div>
-            <h2 className="text-lg font-bold">Step 6: Compatible Channel Partner Routing</h2>
+            <h2 className="text-lg font-bold">Step 4 — Compatible Channel Partner</h2>
             <p className="text-xs text-slate-300">
               Ranked nearby implementation branches for <strong className="text-white">{selectedSchemeName}</strong>
             </p>
@@ -109,7 +109,7 @@ export const PartnerRouter: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {/* Assistance Action Buttons: Chat / Call Partner / Visit Guidance */}
+                {/* Assistance Action Buttons: Ask NidhiPath / Call Partner / Visit Guidance */}
                 <div className="pt-3 border-t border-slate-200 space-y-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase font-mono block">Prototype Partner Data • Assistance Flow:</span>
                   <div className="grid grid-cols-3 gap-1.5">
@@ -118,7 +118,7 @@ export const PartnerRouter: React.FC<Props> = ({
                       className="inline-flex items-center justify-center space-x-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-2 px-1.5 rounded-lg transition-colors shadow-sm"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
-                      <span>Chat</span>
+                      <span>Ask NidhiPath</span>
                     </button>
                     <button
                       onClick={() => setCallPartner(p)}

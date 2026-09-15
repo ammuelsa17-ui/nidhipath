@@ -33,12 +33,12 @@ export const Header: React.FC = () => {
 
         {/* Quick Nav Anchor Links */}
         <nav className="hidden sm:flex items-center space-x-6 text-sm text-slate-300">
-          <a href="#beneficiary-input" className="hover:text-blue-400 transition-colors">1. Profile Input</a>
-          <a href="#eligibility-matrix" className="hover:text-blue-400 transition-colors">2. Eligibility Engine</a>
-          <a href="#financial-calc" className="hover:text-blue-400 transition-colors">3. Financial EMI</a>
-          <a href="#partner-routing" className="hover:text-blue-400 transition-colors">4. Partner Router</a>
+          <a href="#beneficiary-input" className="hover:text-blue-400 transition-colors">Step 1 — Profile</a>
+          <a href="#eligibility-matrix" className="hover:text-blue-400 transition-colors">Step 2 — Eligibility</a>
+          <a href="#financial-calc" className="hover:text-blue-400 transition-colors">Step 3 — Financials</a>
+          <a href="#partner-routing" className="hover:text-blue-400 transition-colors">Step 4 — Partners</a>
           <a href="#ai-guidance" className="hover:text-blue-400 transition-colors flex items-center gap-1 text-blue-400 font-medium">
-            <Sparkles className="w-3.5 h-3.5" /> 5. AI Guidance
+            <Sparkles className="w-3.5 h-3.5" /> Step 5 — AI Guidance
           </a>
         </nav>
       </div>

@@ -27,7 +27,7 @@ export const EligibilityResults: React.FC<Props> = ({
         <div>
           <div className="flex items-center space-x-2">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            <h2 className="text-lg font-bold">Step 2: Rule-Based Scheme Matching Matrix</h2>
+            <h2 className="text-lg font-bold">Step 2 — Eligibility & Scheme Matching</h2>
           </div>
           <p className="text-xs text-slate-300 mt-1">
             Evaluated by deterministic logic module (<code className="bg-slate-800 px-1 py-0.5 rounded text-blue-300 font-mono">lib/eligibility/engine.ts</code>)
@@ -123,16 +123,38 @@ export const EligibilityResults: React.FC<Props> = ({
 
                 {/* Scheme Title & Description */}
                 <h3 className="text-base font-bold text-slate-900 mb-1">{item.scheme.name}</h3>
-                <p className="text-xs text-slate-600 mb-4">{item.scheme.description}</p>
+                <p className="text-xs text-slate-600 mb-3">{item.scheme.description}</p>
+
+                {/* Why This Fits Section */}
+                {item.isEligible && item.matchingHighlights && item.matchingHighlights.length > 0 && (
+                  <div className="bg-blue-50/60 p-3 rounded-lg border border-blue-200/60 mb-4 text-xs">
+                    <span className="font-bold text-blue-950 block mb-1">Why this is a strong fit:</span>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-blue-900">
+                      {item.matchingHighlights.slice(0, 4).map((hl, hIdx) => (
+                        <li key={hIdx} className="flex items-center gap-1.5 text-[11px]">
+                          <span className="text-blue-600 font-bold">•</span>
+                          <span>{hl}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {/* Key Financial Highlights Row */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-100/80 p-3 rounded-lg border border-slate-200 mb-4 text-xs">
                   <div>
-                    <span className="text-slate-500 block text-[11px]">Max Scheme Loan</span>
-                    <strong className="text-slate-900 text-sm">₹{(item.scheme.maxLoanAmount / 100000).toFixed(1)} Lakhs</strong>
+                    <span className="text-slate-500 block text-[11px]">
+                      {item.scheme.code === 'PMEGP' ? 'Max Project Cost for Subsidy' : 'Max Scheme Loan'}
+                    </span>
+                    <strong className="text-slate-900 text-sm">
+                      ₹{(item.scheme.maxLoanAmount / 100000).toFixed(1)} Lakhs
+                      {item.scheme.code === 'PMEGP' && <span className="text-[10px] text-slate-500 block font-normal">(Mfg: ₹50L / Service: ₹20L)</span>}
+                    </strong>
                   </div>
                   <div>
-                    <span className="text-slate-500 block text-[11px]">Estimated Subsidy</span>
+                    <span className="text-slate-500 block text-[11px]">
+                      {item.subsidyPercentageEstimated > 0 ? 'Estimated Margin Money Subsidy' : 'Estimated Subsidy'}
+                    </span>
                     <strong className="text-emerald-700 text-sm flex items-center gap-1">
                       <Percent className="w-3.5 h-3.5" /> {item.subsidyPercentageEstimated}% (₹{item.maxSubsidyAmountEstimated.toLocaleString('en-IN')})
                     </strong>
