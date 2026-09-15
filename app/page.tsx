@@ -15,22 +15,22 @@ import { AIAssistant } from '../components/AIAssistant';
 
 import { Compass, ShieldCheck, Calculator, Navigation, Sparkles, ArrowDown } from 'lucide-react';
 
-// Default initial preset profile for immediate page rendering
+// Default initial preset profile tailored for SIH26092 Target SC Beneficiary
 const INITIAL_PROFILE: BeneficiaryProfile = {
-  applicantName: 'Sunita Devi',
-  age: 32,
-  gender: 'female',
-  socialCategory: 'OBC',
+  applicantName: 'Ramesh Naik',
+  age: 29,
+  gender: 'male',
+  socialCategory: 'SC',
   isDifferentlyAbled: false,
-  education: '10th_pass',
-  annualIncome: 180000,
+  education: 'graduate_plus',
+  annualIncome: 250000,
   state: 'Karnataka',
-  pinCode: '562112',
-  locationType: 'rural',
-  projectType: 'agro_processing',
-  projectDescription: 'Establishing a solar-powered spice grinding & food packaging unit',
-  estimatedCost: 1200000, // ₹12 Lakhs
-  ownContribution: 120000,
+  pinCode: '560034',
+  locationType: 'urban',
+  projectType: 'manufacturing',
+  projectDescription: 'Setting up an eco-friendly paper packaging manufacturing plant',
+  estimatedCost: 2500000, // ₹25 Lakhs
+  ownContribution: 250000,
   isFirstGeneration: true
 };
 

@@ -34,16 +34,21 @@ export const PartnerRouter: React.FC<Props> = ({
       </div>
 
       <div className="p-6 space-y-6">
-        <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-blue-950">
-            <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
-            <span>
-              Beneficiary PIN Area: <strong className="font-mono font-bold text-slate-900">{pinCode}</strong> — Displaying nearest scheme-compatible nodal branches.
+        <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl space-y-2 text-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-2 text-blue-950">
+              <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
+              <span>
+                Beneficiary PIN Area: <strong className="font-mono font-bold text-slate-900">{pinCode}</strong> — Displaying nearest scheme-compatible nodal branches.
+              </span>
+            </div>
+            <span className="text-[11px] text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded font-mono shrink-0">
+              {partners.length} Partner Branches Found
             </span>
           </div>
-          <span className="text-[11px] text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded font-mono shrink-0">
-            {partners.length} Partner Branches Found
-          </span>
+          <p className="text-[11px] text-slate-600 border-t border-blue-200/60 pt-2 italic">
+            ℹ️ <strong>Prototype Dataset Note:</strong> Structured partner records demonstrate the Haversine distance-based routing algorithm. Production deployment connects with live institutional partner directory APIs.
+          </p>
         </div>
 
         {/* Partner Cards Grid */}

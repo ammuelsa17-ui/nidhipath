@@ -107,7 +107,7 @@ export function evaluateSingleScheme(
       requirement: 'Applicant must be SC, ST or Female entrepreneur',
       actual: `Category: ${profile.socialCategory}, Gender: ${profile.gender}`,
       message: demoPassed
-        ? `✓ Qualified target demographic (${isFemale ? 'Female Entrepreneur' : ''}${isFemale && isSCorST ? ' & ' : ''}${isSCorST ? profile.socialCategory + ' Category' : ''})`
+        ? `✓ Qualified target demographic (${isSCorST ? profile.socialCategory + ' Category' : ''}${isSCorST && isFemale ? ' & ' : ''}${isFemale ? 'Female Entrepreneur' : ''})`
         : `✗ Stand-Up India specifically targets SC, ST or Woman entrepreneurs`
     };
     if (demoPassed) passedConditions.push(cond);

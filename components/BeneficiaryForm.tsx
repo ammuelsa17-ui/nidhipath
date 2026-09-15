@@ -9,6 +9,27 @@ interface Props {
 
 const PRESET_PERSONAS: { name: string; tag: string; profile: BeneficiaryProfile }[] = [
   {
+    name: 'Ramesh (SC Youth Enterprise)',
+    tag: 'Target SIH Beneficiary • Stand-Up India',
+    profile: {
+      applicantName: 'Ramesh Naik',
+      age: 29,
+      gender: 'male',
+      socialCategory: 'SC',
+      isDifferentlyAbled: false,
+      education: 'graduate_plus',
+      annualIncome: 250000,
+      state: 'Karnataka',
+      pinCode: '560034',
+      locationType: 'urban',
+      projectType: 'manufacturing',
+      projectDescription: 'Setting up an eco-friendly paper packaging manufacturing plant',
+      estimatedCost: 2500000, // ₹25 Lakhs
+      ownContribution: 250000,
+      isFirstGeneration: true
+    }
+  },
+  {
     name: 'Sunita (Rural Woman Micro-Entrepreneur)',
     tag: 'Matches PMEGP 35% Subsidy',
     profile: {
@@ -26,27 +47,6 @@ const PRESET_PERSONAS: { name: string; tag: string; profile: BeneficiaryProfile 
       projectDescription: 'Establishing a solar-powered spice grinding & food packaging unit',
       estimatedCost: 1200000, // ₹12 Lakhs
       ownContribution: 120000,
-      isFirstGeneration: true
-    }
-  },
-  {
-    name: 'Ramesh (ST Youth Enterprise)',
-    tag: 'Matches Stand-Up India',
-    profile: {
-      applicantName: 'Ramesh Naik',
-      age: 29,
-      gender: 'male',
-      socialCategory: 'ST',
-      isDifferentlyAbled: false,
-      education: 'graduate_plus',
-      annualIncome: 250000,
-      state: 'Karnataka',
-      pinCode: '560034',
-      locationType: 'urban',
-      projectType: 'manufacturing',
-      projectDescription: 'Setting up an eco-friendly paper packaging manufacturing plant',
-      estimatedCost: 2500000, // ₹25 Lakhs
-      ownContribution: 250000,
       isFirstGeneration: true
     }
   },
