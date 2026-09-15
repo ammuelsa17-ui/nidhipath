@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SchemeEligibilityResult } from '../types';
-import { CheckCircle2, XCircle, Award, ShieldCheck, Percent, ArrowRight, FileText } from 'lucide-react';
+import { CheckCircle2, XCircle, Award, ShieldCheck, Percent, ArrowRight, FileText, ExternalLink } from 'lucide-react';
 
 interface Props {
   results: SchemeEligibilityResult[];
