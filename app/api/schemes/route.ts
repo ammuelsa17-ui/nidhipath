@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { fetchSchemesFromCloudDB } from '../../../lib/db/client';
 
+export const dynamic = 'force-static';
+
 export async function GET() {
   try {
     const schemes = await fetchSchemesFromCloudDB();

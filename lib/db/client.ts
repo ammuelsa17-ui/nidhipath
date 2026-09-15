@@ -10,12 +10,18 @@ import { DEMO_PARTNERS } from '../../data/partners';
 
 // Helper to get pg Pool with SSL configuration for Supabase / Cloud Postgres
 async function getPgPool(dbUrl: string) {
-  const { Pool } = await import('pg');
-  return new Pool({
-    connectionString: dbUrl,
-    ssl: { rejectUnauthorized: false },
-    connectionTimeoutMillis: 5000
-  });
+  try {
+    const mod = 'pg';
+    const { Pool } = await import(mod);
+    return new Pool({
+      connectionString: dbUrl,
+      ssl: { rejectUnauthorized: false },
+      connectionTimeoutMillis: 5000
+    });
+  } catch (err) {
+    console.warn('pg module import notice:', err);
+    return null;
+  }
 }
 
 // Ensures Supabase PostgreSQL tables exist and are seeded with initial records if empty
@@ -133,12 +139,14 @@ export async function fetchSchemesFromCloudDB(): Promise<Scheme[]> {
   if (dbUrl) {
     try {
       const pool = await getPgPool(dbUrl);
+      if (!pool) return DEMO_SCHEMES;
+
       await ensureTablesAndSeed(pool);
       const res = await pool.query('SELECT * FROM schemes ORDER BY id');
       await pool.end();
 
       if (res.rows && res.rows.length > 0) {
-        return res.rows.map(row => ({
+        return res.rows.map((row: any) => ({
           id: row.id,
           code: row.code,
           name: row.name,
@@ -173,12 +181,14 @@ export async function fetchPartnersFromCloudDB(): Promise<ChannelPartner[]> {
   if (dbUrl) {
     try {
       const pool = await getPgPool(dbUrl);
+      if (!pool) return DEMO_PARTNERS;
+
       await ensureTablesAndSeed(pool);
       const res = await pool.query('SELECT * FROM channel_partners ORDER BY id');
       await pool.end();
 
       if (res.rows && res.rows.length > 0) {
-        return res.rows.map(row => ({
+        return res.rows.map((row: any) => ({
           id: row.id,
           name: row.name,
           type: row.partner_type,
