@@ -180,8 +180,10 @@ ON CONFLICT (id) DO UPDATE SET
 
 
 -- ------------------------------------------------------------------------------
--- 3. SEED SCHEME ELIGIBILITY RULES
+-- 3. SEED SCHEME ELIGIBILITY RULES (Idempotent: Clears and resets rule list)
 -- ------------------------------------------------------------------------------
+
+DELETE FROM scheme_eligibility_rules;
 
 -- PMEGP Rules
 INSERT INTO scheme_eligibility_rules (scheme_id, field, operator, value, description) VALUES
