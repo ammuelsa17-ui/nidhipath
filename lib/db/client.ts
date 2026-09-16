@@ -36,6 +36,13 @@ function cleanConnectionString(raw?: string): string {
   if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
     str = str.slice(1, -1).trim();
   }
+  str = str.replace(/^\[+|\]+$/g, '').trim();
+  if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
+    str = str.slice(1, -1).trim();
+  }
+  if (!str.startsWith('postgres://') && !str.startsWith('postgresql://')) {
+    str = 'postgresql://' + str.replace(/^[a-zA-Z0-9_-]+:\/\//, '');
+  }
   return str;
 }
 
