@@ -43,6 +43,24 @@ function cleanConnectionString(raw?: string): string {
   if (!str.startsWith('postgres://') && !str.startsWith('postgresql://')) {
     str = 'postgresql://' + str.replace(/^[a-zA-Z0-9_-]+:\/\//, '');
   }
+
+  try {
+    new URL(str);
+    return str;
+  } catch (e) {
+    try {
+      const match = str.match(/^(postgresql:\/\/|postgres:\/\/)([^:]+):(.*)@([^/]+)(.*)$/);
+      if (match) {
+        const [, proto, user, pass, hostPort, rest] = match;
+        const safePass = encodeURIComponent(decodeURIComponent(pass));
+        const repaired = `${proto}${user}:${safePass}@${hostPort}${rest}`;
+        new URL(repaired);
+        return repaired;
+      }
+    } catch (e2) {
+      // Return str best effort
+    }
+  }
   return str;
 }
 
