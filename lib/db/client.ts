@@ -361,13 +361,13 @@ export async function logDecisionTraceToDB(trace: DecisionLogTrace): Promise<voi
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         trace.id,
-        trace.sessionId,
-        JSON.stringify(trace.beneficiaryProfile),
-        JSON.stringify(trace.evaluatedSchemes),
+        trace.sessionId || ('session_' + Date.now()),
+        JSON.stringify(trace.beneficiaryProfile || {}),
+        JSON.stringify(trace.evaluatedSchemes || []),
         trace.selectedScheme || null,
         JSON.stringify(trace.scoreBreakdown || {}),
-        JSON.stringify(trace.rulesTriggered),
-        JSON.stringify(trace.sourceVersions)
+        JSON.stringify(trace.rulesTriggered || []),
+        JSON.stringify(trace.sourceVersions || [])
       ]
     );
   } finally {
