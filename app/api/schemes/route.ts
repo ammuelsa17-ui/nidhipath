@@ -14,9 +14,11 @@ export async function GET() {
   } catch (err: any) {
     console.error('Error fetching schemes from database:', err?.message || err);
     if (err instanceof DatabaseConnectionError || err?.name === 'DatabaseConnectionError') {
+      const envKeys = Object.keys(process.env).filter(k => k.toLowerCase().includes('db') || k.toLowerCase().includes('postgres') || k.toLowerCase().includes('database') || k.toLowerCase().includes('url') || k.startsWith('VERCEL'));
       return NextResponse.json({
         error: 'DATABASE_UNAVAILABLE',
-        message: 'NidhiPath Database Connection Required — Please configure DATABASE_URL in environment settings.'
+        message: 'NidhiPath Database Connection Required — Please configure DATABASE_URL in environment settings.',
+        detectedEnvKeys: envKeys
       }, { status: 503 });
     }
     return NextResponse.json({ error: 'INTERNAL_ERROR', message: err?.message || 'Failed to query database.' }, { status: 500 });
