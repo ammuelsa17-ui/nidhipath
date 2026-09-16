@@ -28,7 +28,7 @@ export class DatabaseConnectionError extends Error {
 }
 
 async function getPgPool() {
-  const dbUrl = typeof process !== 'undefined' ? process.env.DATABASE_URL : undefined;
+  const dbUrl = typeof process !== 'undefined' ? (process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_DATABASE_URL) : undefined;
   if (!dbUrl) {
     throw new DatabaseConnectionError('DATABASE_URL environment variable is missing. PostgreSQL database connection required.');
   }
