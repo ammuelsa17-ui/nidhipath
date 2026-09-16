@@ -17,7 +17,8 @@ export async function GET() {
       const envKeys = Object.keys(process.env).filter(k => k.toLowerCase().includes('db') || k.toLowerCase().includes('postgres') || k.toLowerCase().includes('database') || k.toLowerCase().includes('url') || k.startsWith('VERCEL'));
       return NextResponse.json({
         error: 'DATABASE_UNAVAILABLE',
-        message: 'NidhiPath Database Connection Required — Please configure DATABASE_URL in environment settings.',
+        message: err?.message || 'NidhiPath Database Connection Required — Please configure DATABASE_URL in environment settings.',
+        errName: err?.name,
         detectedEnvKeys: envKeys
       }, { status: 503 });
     }

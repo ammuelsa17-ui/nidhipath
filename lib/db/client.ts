@@ -28,9 +28,10 @@ export class DatabaseConnectionError extends Error {
 }
 
 async function getPgPool() {
-  const dbUrl = typeof process !== 'undefined' ? (process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_DATABASE_URL) : undefined;
+  const rawUrl = typeof process !== 'undefined' ? (process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_DATABASE_URL) : undefined;
+  const dbUrl = (rawUrl || '').trim();
   if (!dbUrl) {
-    throw new DatabaseConnectionError('DATABASE_URL environment variable is missing. PostgreSQL database connection required.');
+    throw new DatabaseConnectionError(`DATABASE_URL environment variable is missing or empty (rawType=${typeof rawUrl}, rawLen=${rawUrl ? rawUrl.length : 0}). PostgreSQL database connection required.`);
   }
 
   try {
@@ -198,6 +199,9 @@ export async function fetchSchemesFromCloudDB(): Promise<Scheme[]> {
       sourceEffectiveDate: row.source_effective_date || '2026-01-07',
       lastVerifiedDate: row.last_verified_at || '2026-03-01'
     }));
+  } catch (err: any) {
+    if (err instanceof DatabaseConnectionError) throw err;
+    throw new DatabaseConnectionError(`PostgreSQL Query Failure: ${err?.message || err}`);
   } finally {
     await pool.end();
   }
