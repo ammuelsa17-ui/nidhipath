@@ -1,19 +1,28 @@
 import React, { useState } from 'react';
-import { SchemeEligibilityResult } from '../types';
-import { CheckCircle2, XCircle, Award, ShieldCheck, Percent, ArrowRight, FileText, ExternalLink } from 'lucide-react';
+import { SchemeEligibilityResult, BeneficiaryProfile } from '../types';
+import { CheckCircle2, XCircle, Award, ShieldCheck, Percent, ArrowRight, FileText, ExternalLink, HelpCircle, RefreshCw } from 'lucide-react';
+import { DecisionAuditModal } from './DecisionAuditModal';
 
 interface Props {
   results: SchemeEligibilityResult[];
   selectedSchemeId: string;
   onSelectScheme: (schemeResult: SchemeEligibilityResult) => void;
+  profile: BeneficiaryProfile;
+  realtimeUpdateNotification?: boolean;
+  onRecalculateRealtime?: () => void;
 }
 
 export const EligibilityResults: React.FC<Props> = ({
   results,
   selectedSchemeId,
-  onSelectScheme
+  onSelectScheme,
+  profile,
+  realtimeUpdateNotification = false,
+  onRecalculateRealtime
 }) => {
   const [activeTab, setActiveTab] = useState<'eligible' | 'all'>('eligible');
+  const [auditResult, setAuditResult] = useState<SchemeEligibilityResult | null>(null);
+
   const eligibleCount = results.filter(r => r.isEligible).length;
 
   const displayResults = activeTab === 'eligible' 
@@ -22,6 +31,26 @@ export const EligibilityResults: React.FC<Props> = ({
 
   return (
     <div id="eligibility-matrix" className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      {/* Realtime Database Update Banner Notification */}
+      {realtimeUpdateNotification && (
+        <div className="bg-blue-900 text-white px-5 py-3 text-xs flex items-center justify-between border-b border-blue-800 animate-pulse">
+          <div className="flex items-center space-x-2">
+            <RefreshCw className="w-4 h-4 text-blue-300 animate-spin" />
+            <span>
+              <strong className="font-bold text-white">Database Rules Updated:</strong> Statutory scheme parameters have changed in PostgreSQL. Recheck your recommendations using latest rules.
+            </span>
+          </div>
+          {onRecalculateRealtime && (
+            <button
+              onClick={onRecalculateRealtime}
+              className="bg-white text-blue-950 font-bold px-3 py-1 rounded text-xs hover:bg-blue-50 transition-colors shadow-sm"
+            >
+              [Recalculate Now]
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-slate-900 text-white p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800">
         <div>
@@ -30,7 +59,7 @@ export const EligibilityResults: React.FC<Props> = ({
             <h2 className="text-lg font-bold">Step 2 — Eligibility & Scheme Matching</h2>
           </div>
           <p className="text-xs text-slate-300 mt-1">
-            Evaluated by deterministic logic module (<code className="bg-slate-800 px-1 py-0.5 rounded text-blue-300 font-mono">lib/eligibility/engine.ts</code>)
+            Evaluated by PostgreSQL Rule Engine (<code className="bg-slate-800 px-1 py-0.5 rounded text-blue-300 font-mono">lib/eligibility/engine.ts</code>)
           </p>
         </div>
 
@@ -212,11 +241,20 @@ export const EligibilityResults: React.FC<Props> = ({
                 </div>
 
                 {/* Card Action Footer */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs">
+                  <div className="flex flex-wrap items-center gap-2 text-slate-600">
                     <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="font-semibold text-slate-700">Prototype Dataset • Based on Official Sources</span>
-                    <span className="text-slate-400 text-[11px] font-mono">(Verified: {item.scheme.lastVerifiedDate || '2026-03-01'})</span>
+                    <span className="font-semibold text-slate-700">Source: {item.scheme.sourceName || 'Official Guidelines'}</span>
+                    <span className="bg-slate-100 text-slate-700 text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-200">
+                      Version: {item.scheme.ruleVersion || 'v2.6'}
+                    </span>
+                    <span className="text-slate-300">|</span>
+                    <button
+                      onClick={() => setAuditResult(item)}
+                      className="text-blue-700 hover:text-blue-900 font-bold inline-flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
+                    >
+                      <HelpCircle className="w-3 h-3 text-blue-600" /> Why this result?
+                    </button>
                     <span className="text-slate-300">|</span>
                     <a
                       href={item.scheme.officialSourceUrl}
@@ -247,6 +285,15 @@ export const EligibilityResults: React.FC<Props> = ({
           })
         )}
       </div>
+
+      {/* Decision Audit Modal */}
+      {auditResult && (
+        <DecisionAuditModal
+          result={auditResult}
+          profile={profile}
+          onClose={() => setAuditResult(null)}
+        />
+      )}
     </div>
   );
 };

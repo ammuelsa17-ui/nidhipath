@@ -32,11 +32,36 @@ export interface BeneficiaryProfile {
   isFirstGeneration: boolean;
 }
 
-export interface EligibilityCondition {
+export interface SchemeSource {
   id: string;
-  name: string;
+  sourceName: string;
+  sourceUrl: string;
+  sourceType: string;
+  sourceEffectiveDate: string;
+  lastVerifiedAt: string;
+  verificationStatus: string;
+  notes?: string;
+}
+
+export interface RuleVersion {
+  id: string;
+  schemeId: string;
+  version: string;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  changeSummary: string;
+  publishedBy?: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+}
+
+export interface SchemeDocument {
+  id: string;
+  schemeId: string;
+  documentName: string;
+  mandatory: boolean;
   description: string;
-  evaluate: (profile: BeneficiaryProfile) => { passed: boolean; message: string; requirement: string; actual: string };
+  sourceId?: string;
+  active: boolean;
 }
 
 export interface SchemeRuleDefinition {
@@ -51,6 +76,20 @@ export interface SchemeRuleDefinition {
   minEducation?: EducationLevel;
   locationRestriction?: 'urban' | 'rural' | 'both';
   requiresFirstGeneration?: boolean;
+}
+
+export interface DBEligibilityRule {
+  id: number;
+  schemeId: string;
+  field: string;
+  operator: string;
+  value: string;
+  ruleGroup: string;
+  priority: number;
+  explanation: string;
+  sourceId?: string;
+  ruleVersion: string;
+  active: boolean;
 }
 
 export interface Scheme {
@@ -69,20 +108,26 @@ export interface Scheme {
   maxTenureYears: number; // e.g. 7
   moratoriumMonths: number; // e.g. 6
   collateralRequired: boolean;
-  
-  // Deterministic Rules
+  active?: boolean;
+
+  // Application URL & Source Versioning
+  applicationUrl?: string;
+  sourceId?: string;
+  ruleVersion?: string;
+  sourceName?: string;
+  officialSourceUrl?: string;
+  sourceEffectiveDate?: string;
+  lastVerifiedDate?: string;
+
+  // Deterministic Rules & Documents
   rules: SchemeRuleDefinition;
-  
+  dbRules?: DBEligibilityRule[];
+  documents?: SchemeDocument[];
+
   // Scheme categorization & NSFDC alignment
   isNsfdcScheme?: boolean;
   categoryTag?: string; // 'NSFDC Primary Scheme' | 'General Credit Scheme'
-
-  // Verification details
-  officialSourceUrl: string;
-  sourceName?: string;
-  sourceEffectiveDate?: string;
-  lastVerifiedDate: string;
-  isPrototypeData: boolean;
+  isPrototypeData?: boolean;
 }
 
 export interface ConditionEvaluation {
@@ -91,6 +136,8 @@ export interface ConditionEvaluation {
   requirement: string;
   actual: string;
   message: string;
+  ruleVersion?: string;
+  sourceUrl?: string;
 }
 
 export interface SchemeEligibilityResult {
@@ -103,6 +150,13 @@ export interface SchemeEligibilityResult {
   maxSubsidyAmountEstimated: number;
   maxEligibleLoan: number;
   matchingHighlights: string[];
+  scoreBreakdown?: {
+    totalScore: number;
+    targetScore: number;
+    costScore: number;
+    financeScore: number;
+    flexibilityScore: number;
+  };
 }
 
 export interface EMIBreakdown {
@@ -137,7 +191,9 @@ export interface ChannelPartner {
   contactEmail: string;
   supportedSchemeIds: string[];
   nodalOfficerName?: string;
-  isDemoData: boolean;
+  authorizationStatus?: 'AUTHORIZED_NODAL' | 'PENDING_VERIFICATION' | 'REVOKED';
+  active?: boolean;
+  isDemoData?: boolean;
 }
 
 export interface PartnerMatchResult {
@@ -146,6 +202,48 @@ export interface PartnerMatchResult {
   supportsSelectedScheme: boolean;
   matchScore: number;
   matchingReason: string;
+  authorizationStatus: string;
+}
+
+export interface WhatIfRequest {
+  profile: BeneficiaryProfile;
+  modifiedCost?: number;
+  modifiedIncome?: number;
+  modifiedCategory?: SocialCategory;
+  modifiedLocation?: 'urban' | 'rural';
+  modifiedActivity?: ProjectCategory;
+  modifiedContribution?: number;
+}
+
+export interface WhatIfResponse {
+  originalBestFit: string;
+  newBestFit: string;
+  hasChanged: boolean;
+  reasonsForChange: string[];
+  originalResults: SchemeEligibilityResult[];
+  newResults: SchemeEligibilityResult[];
+}
+
+export interface ReadinessResult {
+  schemeId: string;
+  schemeName: string;
+  readinessScore: number; // 0 - 100
+  status: 'READY' | 'PARTIALLY_READY' | 'NOT_READY';
+  mandatoryDocuments: SchemeDocument[];
+  missingDocuments: SchemeDocument[];
+  nextBestAction: string;
+}
+
+export interface DecisionLogTrace {
+  id: string;
+  sessionId: string;
+  beneficiaryProfile: BeneficiaryProfile;
+  evaluatedSchemes: { schemeId: string; score: number; isEligible: boolean }[];
+  selectedScheme?: string;
+  scoreBreakdown?: any;
+  rulesTriggered: ConditionEvaluation[];
+  sourceVersions: { schemeId: string; version: string; sourceUrl: string }[];
+  createdAt: string;
 }
 
 export interface AIExplanationRequest {

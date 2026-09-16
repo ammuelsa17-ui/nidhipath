@@ -1,16 +1,18 @@
 import { BeneficiaryProfile, Scheme, ConditionEvaluation, SchemeEligibilityResult } from '../../types';
-import { DEMO_SCHEMES } from '../../data/schemes';
 
 /**
  * DETERMINISTIC ELIGIBILITY EVALUATION ENGINE
- * IMPORTANT: NO LLM OR AI IS USED IN THIS MODULE.
+ * Pure Rule Processing & Validation from Database Records.
  * RULES DECIDE. AI EXPLAINS.
  */
 
 export function evaluateEligibility(
   profile: BeneficiaryProfile,
-  schemes: Scheme[] = DEMO_SCHEMES
+  schemes: Scheme[]
 ): SchemeEligibilityResult[] {
+  if (!schemes || !Array.isArray(schemes)) {
+    throw new Error('evaluateEligibility requires an array of database-fetched schemes.');
+  }
   return schemes.map(scheme => evaluateSingleScheme(profile, scheme));
 }
 
@@ -23,6 +25,8 @@ export function evaluateSingleScheme(
   const highlights: string[] = [];
 
   const r = scheme.rules;
+  const versionInfo = scheme.ruleVersion || 'v2.6';
+  const sourceUrl = scheme.officialSourceUrl || 'https://nsfdc.nic.in/faqs';
 
   // 1. AGE CHECK
   if (r.minAge !== undefined || r.maxAge !== undefined) {
@@ -37,7 +41,9 @@ export function evaluateSingleScheme(
       actual: `${profile.age} years old`,
       message: agePassed 
         ? `✓ Age (${profile.age} yrs) satisfies requirement (${minAge}-${maxAge} yrs)`
-        : `✗ Age (${profile.age} yrs) is outside permitted range (${minAge}-${maxAge} yrs)`
+        : `✗ Age (${profile.age} yrs) is outside permitted range (${minAge}-${maxAge} yrs)`,
+      ruleVersion: versionInfo,
+      sourceUrl
     };
     if (agePassed) passedConditions.push(cond);
     else failedConditions.push(cond);
@@ -55,8 +61,10 @@ export function evaluateSingleScheme(
       requirement: `Project cost between ₹${minCost.toLocaleString('en-IN')} and ₹${maxCost === Infinity ? 'Unlimited' : maxCost.toLocaleString('en-IN')}`,
       actual: `₹${profile.estimatedCost.toLocaleString('en-IN')}`,
       message: costPassed
-        ? `✓ Estimated project cost (₹${profile.estimatedCost.toLocaleString('en-IN')}) is within loan limit (Max ₹${maxCost.toLocaleString('en-IN')})`
-        : `✗ Project cost (₹${profile.estimatedCost.toLocaleString('en-IN')}) exceeds maximum limit (₹${maxCost.toLocaleString('en-IN')})`
+        ? `✓ Estimated project cost (₹${profile.estimatedCost.toLocaleString('en-IN')}) is within loan limit (Max ₹${maxCost === Infinity ? 'Unlimited' : maxCost.toLocaleString('en-IN')})`
+        : `✗ Project cost (₹${profile.estimatedCost.toLocaleString('en-IN')}) exceeds maximum limit (₹${maxCost.toLocaleString('en-IN')})`,
+      ruleVersion: versionInfo,
+      sourceUrl
     };
     if (costPassed) passedConditions.push(cond);
     else failedConditions.push(cond);
@@ -71,8 +79,10 @@ export function evaluateSingleScheme(
       requirement: `Annual income must be ≤ ₹${r.maxIncome.toLocaleString('en-IN')}`,
       actual: `₹${profile.annualIncome.toLocaleString('en-IN')}`,
       message: incomePassed
-        ? `✓ Annual income (₹${profile.annualIncome.toLocaleString('en-IN')}) is within limit`
-        : `✗ Annual income (₹${profile.annualIncome.toLocaleString('en-IN')}) exceeds threshold ₹${r.maxIncome.toLocaleString('en-IN')}`
+        ? `✓ Annual income (₹${profile.annualIncome.toLocaleString('en-IN')}) is within statutory limit (₹${r.maxIncome.toLocaleString('en-IN')})`
+        : `✗ Annual income (₹${profile.annualIncome.toLocaleString('en-IN')}) exceeds threshold ₹${r.maxIncome.toLocaleString('en-IN')}`,
+      ruleVersion: versionInfo,
+      sourceUrl
     };
     if (incomePassed) passedConditions.push(cond);
     else failedConditions.push(cond);
@@ -89,13 +99,15 @@ export function evaluateSingleScheme(
       actual: profile.projectType.replace('_', ' '),
       message: categoryPassed
         ? `✓ Project activity (${profile.projectType.replace('_', ' ')}) is explicitly supported`
-        : `✗ Project activity (${profile.projectType.replace('_', ' ')}) is not covered under this scheme`
+        : `✗ Project activity (${profile.projectType.replace('_', ' ')}) is not covered under this scheme`,
+      ruleVersion: versionInfo,
+      sourceUrl
     };
     if (categoryPassed) passedConditions.push(cond);
     else failedConditions.push(cond);
   }
 
-  // 5. DEMOGRAPHIC / TARGET GROUP CHECK (STAND-UP INDIA SPECIAL RULES VS GENERAL)
+  // 5. DEMOGRAPHIC / TARGET GROUP CHECK
   if (scheme.code === 'STANDUP_INDIA') {
     const isSCorST = profile.socialCategory === 'SC' || profile.socialCategory === 'ST';
     const isFemale = profile.gender === 'female';
@@ -108,12 +120,13 @@ export function evaluateSingleScheme(
       actual: `Category: ${profile.socialCategory}, Gender: ${profile.gender}`,
       message: demoPassed
         ? `✓ Qualified target demographic (${isSCorST ? profile.socialCategory + ' Category' : ''}${isSCorST && isFemale ? ' & ' : ''}${isFemale ? 'Female Entrepreneur' : ''})`
-        : `✗ Stand-Up India specifically targets SC, ST or Woman entrepreneurs`
+        : `✗ Stand-Up India specifically targets SC, ST or Woman entrepreneurs`,
+      ruleVersion: versionInfo,
+      sourceUrl
     };
     if (demoPassed) passedConditions.push(cond);
     else failedConditions.push(cond);
   } else {
-    // General category / gender check if specified
     if (r.allowedCategories && r.allowedCategories.length > 0) {
       const catPassed = r.allowedCategories.includes(profile.socialCategory);
       const cond: ConditionEvaluation = {
@@ -123,7 +136,9 @@ export function evaluateSingleScheme(
         actual: profile.socialCategory,
         message: catPassed 
           ? `✓ Social category (${profile.socialCategory}) is eligible` 
-          : `✗ Scheme targets specific categories: ${r.allowedCategories.join(', ')}`
+          : `✗ Scheme targets specific categories: ${r.allowedCategories.join(', ')}`,
+        ruleVersion: versionInfo,
+        sourceUrl
       };
       if (catPassed) passedConditions.push(cond);
       else failedConditions.push(cond);
@@ -139,6 +154,7 @@ export function evaluateSingleScheme(
     '12th_pass': 4,
     diploma: 5,
     graduate: 6,
+    graduate_plus: 6,
     post_graduate: 7,
   };
 
@@ -154,7 +170,9 @@ export function evaluateSingleScheme(
         actual: profile.education.replace('_', ' '),
         message: isEduSufficient
           ? `✓ Education level (${profile.education.replace('_', ' ')}) meets the 8th Pass requirement`
-          : `✗ PMEGP requires at least 8th Pass for project cost above ₹5L/10L`
+          : `✗ PMEGP requires at least 8th Pass for project cost above ₹5L/10L`,
+        ruleVersion: versionInfo,
+        sourceUrl
       };
       if (isEduSufficient) passedConditions.push(cond);
       else failedConditions.push(cond);
@@ -170,7 +188,9 @@ export function evaluateSingleScheme(
       actual: profile.education.replace('_', ' '),
       message: eduPassed
         ? `✓ Education level (${profile.education.replace('_', ' ')}) meets minimum qualification (${r.minEducation.replace('_', ' ')})`
-        : `✗ Qualification (${profile.education.replace('_', ' ')}) is below required level (${r.minEducation.replace('_', ' ')})`
+        : `✗ Qualification (${profile.education.replace('_', ' ')}) is below required level (${r.minEducation.replace('_', ' ')})`,
+      ruleVersion: versionInfo,
+      sourceUrl
     };
     if (eduPassed) passedConditions.push(cond);
     else failedConditions.push(cond);
@@ -178,8 +198,8 @@ export function evaluateSingleScheme(
 
   const isEligible = failedConditions.length === 0;
 
-  // SUBSIDY ESTIMATION LOGIC (DETERMINISTIC)
-  let subsidyPercent = 0;
+  // SUBSIDY ESTIMATION LOGIC (DETERMINISTIC BASED ON DB SCHEME PARAMS)
+  let subsidyPercent = scheme.maxSubsidyPercent || 0;
   if (scheme.code === 'PMEGP') {
     const isSpecialCategory = ['SC', 'ST', 'OBC', 'MINORITY', 'EX_SERVICEMAN'].includes(profile.socialCategory) ||
                              profile.gender === 'female' ||
@@ -217,7 +237,7 @@ export function evaluateSingleScheme(
   return {
     scheme,
     isEligible,
-    score: 0, // Will be calculated by matching ranker
+    score: 0,
     passedConditions,
     failedConditions,
     subsidyPercentageEstimated: subsidyPercent,
