@@ -1,3 +1,4 @@
+import 'pg';
 import { NextResponse } from 'next/server';
 import { fetchSchemesFromCloudDB, DatabaseConnectionError } from '../../../lib/db/client';
 
