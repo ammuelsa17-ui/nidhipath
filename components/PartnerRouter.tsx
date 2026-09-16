@@ -47,14 +47,14 @@ export const PartnerRouter: React.FC<Props> = ({
       </div>
 
       <div className="p-6 space-y-6">
-        {/* Online Application vs Assisted Application Callout */}
-        {selectedSchemeResult?.scheme?.applicationUrl ? (
+        {/* Online Application vs Official Information / Assisted Application Callout */}
+        {selectedSchemeResult?.scheme?.isVerifiedApplicationPortal ? (
           <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <div className="flex items-center space-x-3 text-emerald-950">
               <span className="bg-emerald-600 text-white font-bold px-2.5 py-1 rounded text-[11px] uppercase tracking-wider font-mono">
-                Online Application Available
+                APPLY ONLINE
               </span>
-              <span>Direct statutory online submission portal is active for <strong className="font-semibold">{selectedSchemeName}</strong>.</span>
+              <span>Verified official online submission portal is active for <strong className="font-semibold">{selectedSchemeName}</strong>.</span>
             </div>
             <a
               href={selectedSchemeResult.scheme.applicationUrl}
@@ -62,16 +62,29 @@ export const PartnerRouter: React.FC<Props> = ({
               rel="noreferrer"
               className="inline-flex items-center space-x-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm shrink-0"
             >
-              <span>Apply Online Portally</span>
+              <span>APPLY ONLINE AT OFFICIAL PORTAL</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
         ) : (
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs text-amber-900 font-medium">
-            <span className="bg-amber-600 text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase font-mono mr-2">
-              Assisted Application Only
-            </span>
-            Physical / SCA Channel Partner application submission required for this scheme.
+          <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="flex items-center space-x-3 text-blue-950">
+              <span className="bg-blue-800 text-white font-bold px-2.5 py-1 rounded text-[11px] uppercase tracking-wider font-mono">
+                OFFICIAL INFORMATION / ASSISTED APPLICATION
+              </span>
+              <span>Application submission is managed via authorized Channel Partner / SCA branch. Official guidelines available.</span>
+            </div>
+            {selectedSchemeResult?.scheme?.officialSourceUrl && (
+              <a
+                href={selectedSchemeResult.scheme.officialSourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm shrink-0"
+              >
+                <span>OFFICIAL INFORMATION / GUIDELINES</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
           </div>
         )}
 

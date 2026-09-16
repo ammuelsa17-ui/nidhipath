@@ -173,6 +173,7 @@ export async function fetchSchemesFromCloudDB(): Promise<Scheme[]> {
       collateralRequired: Boolean(row.collateral_required),
       active: Boolean(row.active),
       applicationUrl: row.application_url || 'https://nsfdc.nic.in/faqs',
+      isVerifiedApplicationPortal: Boolean(row.is_verified_application_portal) || ['PMEGP', 'STANDUP_INDIA', 'PMSVANIDHI', 'PM_VISHWAKARMA'].includes(row.code),
       sourceId: row.source_id,
       ruleVersion: row.rule_version || 'v2.6',
       rules: reconstructSchemeRules(row.id, rulesBySchemeId[row.id]),

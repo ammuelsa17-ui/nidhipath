@@ -128,6 +128,7 @@ export interface Scheme {
   isNsfdcScheme?: boolean;
   categoryTag?: string; // 'NSFDC Primary Scheme' | 'General Credit Scheme'
   isPrototypeData?: boolean;
+  isVerifiedApplicationPortal?: boolean;
 }
 
 export interface ConditionEvaluation {
