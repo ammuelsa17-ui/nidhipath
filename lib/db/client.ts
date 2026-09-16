@@ -28,71 +28,20 @@ export class DatabaseConnectionError extends Error {
   }
 }
 
-function cleanConnectionString(raw?: string): string {
-  if (!raw) return '';
-  let str = raw.trim();
-  if (str.startsWith('DATABASE_URL=')) str = str.substring('DATABASE_URL='.length).trim();
-  if (str.startsWith('POSTGRES_URL=')) str = str.substring('POSTGRES_URL='.length).trim();
-  if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
-    str = str.slice(1, -1).trim();
-  }
-  str = str.replace(/^\[+|\]+$/g, '').trim();
-  if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
-    str = str.slice(1, -1).trim();
-  }
-  if (!str.startsWith('postgres://') && !str.startsWith('postgresql://')) {
-    str = 'postgresql://' + str.replace(/^[a-zA-Z0-9_-]+:\/\//, '');
-  }
-
-  try {
-    new URL(str);
-    return str;
-  } catch (e) {
-    try {
-      const match = str.match(/^(postgresql:\/\/|postgres:\/\/)([^:]+):(.*)@([^/]+)(.*)$/);
-      if (match) {
-        const [, proto, user, pass, hostPort, rest] = match;
-        const safePass = encodeURIComponent(decodeURIComponent(pass));
-        const repaired = `${proto}${user}:${safePass}@${hostPort}${rest}`;
-        new URL(repaired);
-        return repaired;
-      }
-    } catch (e2) {
-      // Return str best effort
-    }
-  }
-  return str;
-}
-
-function getMaskedUrl(urlStr: string): string {
-  if (!urlStr) return 'EMPTY';
-  try {
-    return urlStr.replace(/:\/\/([^:]+):([^@]+)@/, '://$1:***MASKED***@');
-  } catch (e) {
-    return urlStr.substring(0, 15) + '...';
-  }
-}
-
 async function getPgPool() {
-  const rawUrl = typeof process !== 'undefined' ? (process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_DATABASE_URL) : undefined;
-  
-  if (rawUrl && (rawUrl.includes('YOUR-PASSWORD') || rawUrl.includes('YOUR_PASSWORD') || rawUrl.includes('<password>') || rawUrl.includes('[password]'))) {
-    throw new DatabaseConnectionError(`DATABASE_URL contains unreplaced placeholder '[YOUR-PASSWORD]'. Please replace '[YOUR-PASSWORD]' in Vercel Environment Settings with your actual Supabase database password.`);
-  }
-
-  const dbUrl = cleanConnectionString(rawUrl);
-  if (!dbUrl) {
-    throw new DatabaseConnectionError(`DATABASE_URL environment variable is missing or empty. PostgreSQL database connection required.`);
+  const dbUrl = typeof process !== 'undefined' ? (process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_DATABASE_URL) : undefined;
+  if (!dbUrl || !dbUrl.trim()) {
+    throw new DatabaseConnectionError('DATABASE_URL environment variable is missing. PostgreSQL database connection required.');
   }
 
   try {
     return new Pool({
-      connectionString: dbUrl,
+      connectionString: dbUrl.trim(),
       ssl: { rejectUnauthorized: false },
       connectionTimeoutMillis: 5000
     });
   } catch (err: any) {
-    throw new DatabaseConnectionError(`Failed to initialize PostgreSQL pool (maskedUrl="${getMaskedUrl(dbUrl)}"): ${err?.message || err}`);
+    throw new DatabaseConnectionError(`Failed to initialize PostgreSQL pool: ${err?.message || err}`);
   }
 }
 
@@ -250,8 +199,7 @@ export async function fetchSchemesFromCloudDB(): Promise<Scheme[]> {
     }));
   } catch (err: any) {
     if (err instanceof DatabaseConnectionError) throw err;
-    const rawUrl = typeof process !== 'undefined' ? (process.env.DATABASE_URL || process.env.POSTGRES_URL || '') : '';
-    throw new DatabaseConnectionError(`PostgreSQL Query Failure (maskedUrl="${getMaskedUrl(rawUrl)}"): ${err?.message || err}`);
+    throw new DatabaseConnectionError(`PostgreSQL Query Failure: ${err?.message || err}`);
   } finally {
     await pool.end();
   }
