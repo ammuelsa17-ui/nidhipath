@@ -1,3 +1,4 @@
+import { Pool } from 'pg';
 import {
   Scheme,
   ChannelPartner,
@@ -35,8 +36,6 @@ async function getPgPool() {
   }
 
   try {
-    const mod = 'pg';
-    const { Pool } = await import(mod);
     return new Pool({
       connectionString: dbUrl,
       ssl: { rejectUnauthorized: false },
