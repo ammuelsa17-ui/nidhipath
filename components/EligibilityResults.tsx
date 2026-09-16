@@ -154,18 +154,31 @@ export const EligibilityResults: React.FC<Props> = ({
                 <h3 className="text-base font-bold text-slate-900 mb-1">{item.scheme.name}</h3>
                 <p className="text-xs text-slate-600 mb-3">{item.scheme.description}</p>
 
-                {/* Why This Fits Section */}
+                {/* Why This Fits Section & Comparison Against Alternative */}
                 {item.isEligible && item.matchingHighlights && item.matchingHighlights.length > 0 && (
-                  <div className="bg-blue-50/60 p-3 rounded-lg border border-blue-200/60 mb-4 text-xs">
-                    <span className="font-bold text-blue-950 block mb-1">Why this is a strong fit:</span>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-blue-900">
-                      {item.matchingHighlights.slice(0, 4).map((hl, hIdx) => (
-                        <li key={hIdx} className="flex items-center gap-1.5 text-[11px]">
-                          <span className="text-blue-600 font-bold">•</span>
-                          <span>{hl}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="bg-blue-50/60 p-3 rounded-lg border border-blue-200/60 mb-4 text-xs space-y-2">
+                    <div>
+                      <span className="font-bold text-blue-950 block mb-1">Why this is a strong fit:</span>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-blue-900">
+                        {item.matchingHighlights.slice(0, 4).map((hl, hIdx) => (
+                          <li key={hIdx} className="flex items-center gap-1.5 text-[11px]">
+                            <span className="text-blue-600 font-bold">•</span>
+                            <span>{hl}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {isTopMatch && displayResults.length > 1 && displayResults[1].isEligible && (
+                      <div className="pt-2 border-t border-blue-200/80 text-[11px] text-slate-700">
+                        <span className="font-bold text-slate-900">Why selected over alternative ({displayResults[1].scheme.shortName}): </span>
+                        <span>
+                          {item.scheme.isNsfdcScheme && profile.socialCategory === 'SC'
+                            ? `Specifically targeted Corporation financing for SC entrepreneurs with concessional ${item.scheme.interestRate}% interest rate, whereas ${displayResults[1].scheme.shortName} carries higher rates or broader generic mandate.`
+                            : `Superior mandate alignment score (${item.score}/100 vs ${displayResults[1].score}/100) and optimal loan structure.`}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 

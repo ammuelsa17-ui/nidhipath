@@ -161,7 +161,79 @@ export default function AdminPage() {
           </div>
         ) : (
           <>
-            {/* Status Notifications */}
+            {/* SIH Evaluator 1-Click Safe Live Database Demo Panel */}
+            <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border border-blue-800/80 p-5 rounded-2xl space-y-3 text-xs shadow-xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 text-white font-bold text-sm">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span>⚡ SIH Evaluator 1-Click Live Database Change Demo</span>
+                </div>
+                <span className="bg-blue-900/80 text-blue-300 font-mono text-[11px] px-2.5 py-0.5 rounded border border-blue-700/50">
+                  Target: NSFDC Term Loan (Controlled Test)
+                </span>
+              </div>
+              <p className="text-slate-300 text-[11px]">
+                Demonstrate live PostgreSQL database mutation, real-time cache invalidation, and instant application re-calculation <strong>WITHOUT frontend code modifications or Vercel redeployment</strong>.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <button
+                  disabled={saving}
+                  onClick={async () => {
+                    setSaving(true);
+                    try {
+                      await fetch('/api/admin/schemes/nsfdc_term_loan_2026', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ interestRate: 7.25, ruleVersion: 'v2.7' })
+                      });
+                      await fetch('/api/admin/publish', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ schemeId: 'nsfdc_term_loan_2026', newVersion: 'v2.7', changeSummary: 'Lowered interest rate to 7.25% p.a.' })
+                      });
+                      setPublishStatus('✅ LIVE DEMO DB MUTATION COMPLETE: Interest Rate changed 8.0% → 7.25%, Version v2.6 → v2.7 in PostgreSQL. Return to main app / to view live recalculation!');
+                      await loadAdminData();
+                    } catch (err: any) {
+                      setValidationErrors([err?.message || 'Demo update failed']);
+                    } finally {
+                      setSaving(false);
+                    }
+                  }}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg transition-all shadow-md flex items-center gap-1.5"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${saving ? 'animate-spin' : ''}`} />
+                  <span>1. Apply Demo Change (8.0% → 7.25% & v2.7)</span>
+                </button>
+
+                <button
+                  disabled={saving}
+                  onClick={async () => {
+                    setSaving(true);
+                    try {
+                      await fetch('/api/admin/schemes/nsfdc_term_loan_2026', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ interestRate: 8.0, ruleVersion: 'v2.6' })
+                      });
+                      await fetch('/api/admin/publish', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ schemeId: 'nsfdc_term_loan_2026', newVersion: 'v2.6', changeSummary: 'Restored statutory baseline 8.0%' })
+                      });
+                      setPublishStatus('✅ BASELINE RESTORED: Interest Rate restored to 8.0%, Version v2.6 in PostgreSQL.');
+                      await loadAdminData();
+                    } catch (err: any) {
+                      setValidationErrors([err?.message || 'Revert failed']);
+                    } finally {
+                      setSaving(false);
+                    }
+                  }}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-1.5"
+                >
+                  <span>2. Restore Baseline (8.0% & v2.6)</span>
+                </button>
+              </div>
+            </div>
             {publishStatus && (
               <div className="bg-emerald-950/80 border border-emerald-700 text-emerald-200 px-4 py-3 rounded-xl text-xs flex items-center justify-between">
                 <span className="flex items-center gap-2 font-semibold">

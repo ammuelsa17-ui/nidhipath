@@ -67,9 +67,14 @@ export const FinancialCalculator: React.FC<Props> = ({
             </p>
           </div>
         </div>
-        <span className="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-3 py-1 rounded-full font-mono">
-          Formula: EMI = P × r × (1+r)ⁿ / ((1+r)ⁿ - 1)
+      {/* Disclaimer Banner */}
+      <div className="bg-amber-50 border-b border-amber-200 px-5 py-2 text-xs text-amber-900 font-semibold flex items-center justify-between">
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span>Decision-support estimate — not a sanction or guarantee.</span>
         </span>
+        <span className="text-[11px] font-mono text-amber-800">Formula: EMI = P × r × (1+r)ⁿ / ((1+r)ⁿ - 1)</span>
+      </div>
       </div>
 
       <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
